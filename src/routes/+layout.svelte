@@ -11,6 +11,7 @@
   } from "../stores/historyStore";
   import "../app.css";
   import Search from "../components/search.svelte";
+  import ArrowButton from "../components/ArrowButton.svelte";
 
   let canGoBackValue = $state(false);
   let canGoForwardValue = $state(false);
@@ -34,40 +35,38 @@
     }
   };
 
-  const test = () => {
+  /* const test = () => {
     const history = getHistory();
     console.log("history", history);
-  };
+  }; */
 </script>
 
 <div class="flex flex-col h-screen">
   <header class="bg-gray-800 text-white p-4 grid grid-cols-[auto_1fr] gap-4">
     <div class="flex gap-2">
-      <button
-        onclick={() => navigateBack()}
-        class="bg-blue-500 text-white p-2 rounded-lg"
-        class:opacity-50={!canGoBackValue}
+      <ArrowButton
+        direction="left"
         disabled={!canGoBackValue}
-      >
-        go back
-      </button>
+        on:click={() => navigateBack()}
+      ></ArrowButton>
 
-      <button
-        onclick={() => navigateForward()}
-        class="bg-blue-500 text-white p-2 rounded-lg"
-        class:opacity-50={!canGoForwardValue}
+      <ArrowButton
+        direction="right"
         disabled={!canGoForwardValue}
-      >
-        go forward
-      </button>
-      <button onclick={() => test()}> see </button>
+        on:click={() => navigateForward()}
+      ></ArrowButton>
     </div>
 
     <Search />
   </header>
 
   <main class="flex-1">
-    {@render children()}
+    <div class="grid grid-cols-[auto_1fr] h-full">
+      <div class="border-r-2 p-4 border-black">
+        <p class="text-black">home</p>
+      </div>
+      {@render children()}
+    </div>
   </main>
 
   <footer class="bg-gray-800 text-white p-4">

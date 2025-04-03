@@ -9,7 +9,7 @@
   };
 </script>
 
-<h2 class="text-3xl">slug test</h2>
-<p>{page.url.pathname}</p>
-
-<button onclick={() => navigateToPage()}>go somewhere</button>
+<main class="h-full flex flex-col justify-center items-center text-black">
+  <p>{page.url.pathname}</p>
+  <button onclick={() => navigateToPage()}>go somewhere</button>
+</main>

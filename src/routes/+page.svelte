@@ -1,15 +1,9 @@
 <script lang="ts">
-  import { invoke } from "@tauri-apps/api/core";
   import { goto } from "$app/navigation";
-  import {
-    addToHistory,
-    getCurrentPath,
-    goBack,
-    goForward,
-    getHistory,
-  } from "../stores/historyStore";
+  import { addToHistory } from "../stores/historyStore";
 
   import Button from "../components/Button.svelte";
+  import ArrowButton from "../components/ArrowButton.svelte";
 
   const navigateToPage = () => {
     goto("/expolorer");
@@ -25,7 +19,7 @@
     Go to other page
   </button>
 
-  <Button
+  <!-- <Button
     className="bg-green-500 text-white hover:bg-green-600"
     on:click={() => console.log("primary button clicked")}
   >
@@ -37,5 +31,5 @@
     on:click={() => console.log("danger button clicked")}
   >
     Danger Button
-  </Button>
+  </Button> -->
 </main>
