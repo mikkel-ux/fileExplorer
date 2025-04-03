@@ -5,6 +5,14 @@
   import Button from "../components/Button.svelte";
   import ArrowButton from "../components/ArrowButton.svelte";
 
+  import PropsTest from "../components/PropsTest.svelte";
+
+  let value = $state(0);
+
+  $effect(() => {
+    console.log("in pervent", value);
+  });
+
   const navigateToPage = () => {
     goto("/expolorer");
     addToHistory("/expolorer");
@@ -19,17 +27,6 @@
     Go to other page
   </button>
 
-  <!-- <Button
-    className="bg-green-500 text-white hover:bg-green-600"
-    on:click={() => console.log("primary button clicked")}
-  >
-    Primary Button
-  </Button>
-
-  <Button
-    className="bg-red-500 text-white hover:bg-red-600"
-    on:click={() => console.log("danger button clicked")}
-  >
-    Danger Button
-  </Button> -->
+  <p class="text-black">{value}</p>
+  <PropsTest bind:value />
 </main>
