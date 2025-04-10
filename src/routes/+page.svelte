@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { invoke } from "@tauri-apps/api/core";
   import { goto } from "$app/navigation";
   import { addToHistory } from "../stores/historyStore";
 
@@ -8,10 +9,6 @@
   import PropsTest from "../components/PropsTest.svelte";
 
   let value = $state(0);
-
-  $effect(() => {
-    console.log("in pervent", value);
-  });
 
   const navigateToPage = () => {
     goto("/expolorer");
@@ -27,6 +24,6 @@
     Go to other page
   </button>
 
-  <p class="text-black">{value}</p>
-  <PropsTest bind:value />
+  <!-- <p class="text-black">{value}</p>
+  <PropsTest bind:value /> -->
 </main>

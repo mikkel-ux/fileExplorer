@@ -9,7 +9,7 @@ pub struct File {
 }
 
 #[tauri::command]
-pub fn search_files(query: String) -> Vec<File> {
+pub fn search_files(path: String) -> Vec<File> {
     let foo_data = vec![
         File {
             name: "home/foo.txt".to_string(),
@@ -33,14 +33,14 @@ pub fn search_files(query: String) -> Vec<File> {
             name: "home/PATH.txt".to_string(),
         },
     ];
-    let new_query = query.split("/").last().unwrap().to_lowercase();
+    let query = path.split("/").last().unwrap().to_lowercase();
     let matcher = SkimMatcherV2::default();
 
     let mut filtered_files: Vec<(File, i32)> = foo_data
         .into_iter()
         .map(|file| {
             let filename = file.name.split('/').last().unwrap().to_lowercase();
-            let score = fuzzy_score(&filename, &new_query, &matcher);
+            let score = fuzzy_score(&filename, &query, &matcher);
             (file, score)
         })
         .filter(|(_, score)| *score > 0)
