@@ -20,7 +20,7 @@ pub fn get_files() {
 }
 
 #[tauri::command]
-pub fn get_foulders(path: String) -> Result<Vec<String>, String> {
+pub fn get_dirs(path: String) -> Result<Vec<String>, String> {
     let dir_path = get_path(path)?;
 
     let entries = fs::read_dir(&dir_path).map_err(|e| format!("Error reading directory: {}", e))?;
@@ -29,7 +29,7 @@ pub fn get_foulders(path: String) -> Result<Vec<String>, String> {
     for entry in entries {
         if let Ok(entry) = entry {
             if entry.path().is_dir() {
-                paths.push(entry.path().display().to_string());
+                paths.push(entry.path().display().to_string().replace("\\", "/"));
             }
         }
     }
@@ -48,5 +48,5 @@ pub fn get_path(path: String) -> Result<String, String> {
         _ => Ok(PathBuf::from(path)),
     }?;
 
-    Ok(dir_path.display().to_string())
+    Ok(dir_path.display().to_string().replace("\\", "/"))
 }

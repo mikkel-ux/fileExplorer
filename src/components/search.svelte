@@ -1,26 +1,47 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { invoke } from "@tauri-apps/api/core";
+  import { getPath, setPath } from "../stores/pathStore";
 
-  type file = {
+  type dirType = {
     name: string;
   };
 
-  let files = $state<file[]>([]);
-  let showFiles = $state<boolean>(false);
-  let path = $state<string>("home/");
+  let dirs = $state<string[]>([]);
+  let showDirs = $state<boolean>(false);
+  let path = $state<string>("");
+  let initialized = $state<boolean>(false);
 
-  async function searchFile() {
+  /* async function searchFile() {
     if (path.trim() === "") return;
-    files = await invoke("search_files", { path });
-  }
+    dirs = await invoke("search_files", { path });
+    console.log("dirs", dirs);
+  } */
+
+  /* onMount(async () => {
+    path = await invoke("get_path", { path: "home" });
+    try {
+      const dirsInPath: string[] = await invoke("get_foulders", { path });
+      dirs = dirsInPath.map((item: string) => {
+        return item.replace(/\\/g, "/");
+      });
+      initialized = true;
+    } catch (error) {
+      console.log("error", error);
+    }
+  }); */
+
+  /*  $effect(() => {
+    searchFile();
+  }); */
 
   onMount(async () => {
-    path = await invoke("get_path", { path: "home" });
-  });
+    const path: string = await invoke("get_path", { path: "home" });
+    setPath(path);
+    console.log("path", path);
 
-  $effect(() => {
-    searchFile();
+    let test = await invoke("search_files", { path: path });
+    console.log("dirs", test);
   });
 
   const test = async () => {
@@ -43,18 +64,18 @@
     bind:value={path}
     class="border p-2 rounded-lg bg-gray-100 text-black w-full"
     autocomplete="off"
-    onfocus={() => (showFiles = true)}
-    onblur={() => setTimeout(() => (showFiles = false), 50)}
+    onfocus={() => (showDirs = true)}
+    onblur={() => setTimeout(() => (showDirs = false), 50)}
   />
-  {#if showFiles && files.length}
+  {#if showDirs && dirs.length}
     <div
       class="absolute left-0 right-0 bg-gray-100 max-h-30 overflow-y-auto border rounded-lg shadow-lg z-10"
     >
-      {#each files as file}
+      {#each dirs as dir}
         <div
           class="p-2 border-b border-gray-300 hover:bg-gray-200 cursor-pointer text-black"
         >
-          <p>{file.name}</p>
+          <p>{dir}</p>
         </div>
       {/each}
     </div>
