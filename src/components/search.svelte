@@ -12,36 +12,21 @@
   let path = $state<string>("");
   let initialized = $state<boolean>(false);
 
-  /* async function searchFile() {
-    if (path.trim() === "") return;
-    dirs = await invoke("search_files", { path });
-    console.log("dirs", dirs);
-  } */
+  async function searchFile() {
+    if (!initialized || path.trim() === "") return;
+    await invoke("search_test", { path });
+    console.log("searching for", path);
+  }
 
-  /* onMount(async () => {
-    path = await invoke("get_path", { path: "home" });
-    try {
-      const dirsInPath: string[] = await invoke("get_foulders", { path });
-      dirs = dirsInPath.map((item: string) => {
-        return item.replace(/\\/g, "/");
-      });
-      initialized = true;
-    } catch (error) {
-      console.log("error", error);
-    }
-  }); */
-
-  /*  $effect(() => {
+  $effect(() => {
     searchFile();
-  }); */
+  });
 
   onMount(async () => {
-    const path: string = await invoke("get_path", { path: "home" });
+    path = await invoke("get_path", { path: "home" });
     setPath(path);
     console.log("path", path);
-
-    let test = await invoke("search_files", { path: path });
-    console.log("dirs", test);
+    initialized = true;
   });
 
   const test = async () => {

@@ -10,6 +10,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             search::search_files,
+            search::search_test,
             files::get_dirs,
             files::get_files,
             files::get_path,

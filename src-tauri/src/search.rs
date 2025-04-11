@@ -83,3 +83,19 @@ fn fuzzy_score(filename: &str, query: &str, matcher: &SkimMatcherV2) -> i32 {
     let fuzzy_score = matcher.fuzzy_match(filename, query).unwrap_or(0) as i32;
     (distance_score + (fuzzy_score / 5)).max(0)
 }
+
+#[tauri::command]
+pub fn search_test(path: String) {
+    println!("Path: {}", path);
+    let mut parts = path.rsplitn(2, "/");
+    println!("Parts: {:?}", parts.clone().collect::<Vec<_>>());
+    let query = parts.next().unwrap_or("").to_lowercase();
+    let base = parts.next().unwrap_or("").to_lowercase();
+    let dirs = match get_dirs(base.clone()) {
+        Ok(dirs) => dirs,
+        Err(_) => return,
+    };
+    println!("Query: {}", query);
+    println!("Base: {}", base);
+    println!("Dirs: {:?}", dirs);
+}
