@@ -1,5 +1,20 @@
 @import "tailwindcss";
 
+@layer base {
+  :root {
+    --color-mint-500: oklch(0.72 0.11 178);
+  }
+}
+
+@layer utilities {
+  .bg-mint-500 {
+    background-color: var(--color-mint-500);
+  }
+  .text-mint-500 {
+    color: var(--color-mint-500);
+  }
+}
+
 html,
 body {
   margin: 0;

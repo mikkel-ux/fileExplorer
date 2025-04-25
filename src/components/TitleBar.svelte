@@ -22,7 +22,7 @@
 
 <div
   data-tauri-drag-region
-  class="text-black flex justify-between items-center p-2 bg-gray-200 border-b-2 border-black"
+  class="text-mint-500 flex justify-between items-center p-2 bg-mint-500 border-b-2 border-black"
 >
   <p>test</p>
   <div>
