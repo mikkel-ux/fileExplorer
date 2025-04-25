@@ -14,7 +14,10 @@
       {
         "title": "fileexplorer",
         "width": 1000,
-        "height": 500
+        "height": 500,
+        "decorations": false,
+        "transparent": false,
+        "resizable": true
       }
     ],
     "security": {

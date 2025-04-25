@@ -14,7 +14,9 @@
 
   async function searchFile() {
     if (!initialized || path.trim() === "") return;
-    await invoke("search_test", { path });
+    const foo: string[] = await invoke("search_files", { path });
+    dirs = foo;
+    showDirs = true;
     console.log("searching for", path);
   }
 

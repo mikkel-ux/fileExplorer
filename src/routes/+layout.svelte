@@ -12,6 +12,7 @@
   import "../app.css";
   import Search from "../components/search.svelte";
   import ArrowButton from "../components/ArrowButton.svelte";
+  import TitleBar from "../components/TitleBar.svelte";
 
   let canGoBackValue = $state(false);
   let canGoForwardValue = $state(false);
@@ -42,6 +43,7 @@
 </script>
 
 <div class="flex flex-col h-screen">
+  <TitleBar />
   <header class="bg-gray-800 text-white p-4 grid grid-cols-[auto_1fr] gap-4">
     <div class="flex gap-2">
       <ArrowButton
@@ -57,7 +59,7 @@
       ></ArrowButton>
     </div>
 
-    <Search />
+    <!-- <Search /> -->
   </header>
 
   <main class="flex-1">
