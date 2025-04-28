@@ -1,18 +1,12 @@
 @import "tailwindcss";
 
-@layer base {
-  :root {
-    --color-mint-500: oklch(0.72 0.11 178);
-  }
-}
-
-@layer utilities {
-  .bg-mint-500 {
-    background-color: var(--color-mint-500);
-  }
-  .text-mint-500 {
-    color: var(--color-mint-500);
-  }
+@theme {
+  --color-background: #1a1a1d;
+  --color-text: #ffffff;
+  --color-folder: #00d1ff;
+  --color-highlight: #ff007c;
+  --color-secondary-bg: #444444;
+  --color-muted: #757575;
 }
 
 html,
@@ -23,5 +17,8 @@ body {
 }
 
 body {
-  @apply text-white;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-size: 16px;
+  line-height: 1.5;
 }

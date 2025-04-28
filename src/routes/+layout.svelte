@@ -65,7 +65,7 @@
   <main class="flex-1">
     <div class="grid grid-cols-[auto_1fr] h-full">
       <div class="border-r-2 p-4 border-black">
-        <p class="text-black">home</p>
+        <p>home</p>
       </div>
       {@render children()}
     </div>
