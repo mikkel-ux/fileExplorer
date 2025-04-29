@@ -24,12 +24,12 @@
 </script>
 
 <main class="h-full flex flex-col justify-center items-center">
-  <!-- <button
+  <button
     class="bg-blue-500 p-2 rounded-lg mt-4"
     onclick={() => navigateToPage()}
   >
     Go to other page
-  </button> -->
+  </button>
 
-  <TabsDrag />
+  <!-- <TabsDrag /> -->
 </main>
