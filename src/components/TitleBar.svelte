@@ -2,7 +2,7 @@
   import { getCurrentWindow } from "@tauri-apps/api/window";
   import { dndzone } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
-  /*   import {tabs, nextTabId} from "../stores/tabsStore"; */
+  import { tabs, nextTabId, activeTabId } from "../stores/tabsStore";
 
   type Tab = {
     name: string;
@@ -28,29 +28,30 @@
     appWindow.close();
   };
 
-  let tabs: Tab[] = $state([
-    { name: "aaaaaaaaaaaaaaa", id: 1, isActive: true },
-  ]);
-
-  /* let newTabId = $state(
-    tabs.length > 0 ? Math.max(...tabs.map((tab) => tab.id)) + 1 : 1
-  ); */
-
   const addNewTab = () => {
-    const lastTab = tabs[tabs.length - 1];
-    const newTabId = lastTab ? lastTab.id : 0;
+    let id: number = 0;
+    nextTabId.update((n) => {
+      id = n;
+      return n + 1;
+    });
+
     const newTab = {
-      name: `Tab ${tabs.length + 1}`,
-      id: newTabId + 1,
+      name: `Tab ${$tabs.length + 1}`,
+      id,
       isActive: false,
     };
-    tabs.push(newTab);
-    setTabToActive(newTab.id);
+
+    tabs.update((all) => [...all, newTab]);
+    setTabToActive(id);
+    console.log("New tab added:", newTab);
   };
 
   const removeTab = (tabId: number) => {
-    tabs = tabs.filter((tab) => tab.id !== tabId);
+    tabs.update((all) => all.filter((tab) => tab.id !== tabId));
     console.log("Tab removed:", tabId);
+    if ($tabs.length > 0) {
+      setTabToActive($tabs[0].id);
+    }
   };
 
   const handleKeyDown = (event: KeyboardEvent) => {
@@ -58,23 +59,29 @@
       addNewTab();
     }
     if (event.ctrlKey && event.key.toLocaleLowerCase() === "w") {
-      /* const activeTab = tabs[tabs.length - 1];
+      const activeTab = $tabs.find((tab) => tab.id === $activeTabId);
       if (activeTab) {
         removeTab(activeTab.id);
-      } */
+        console.log(activeTab, $activeTabId);
+      }
       console.log("Ctrl + W pressed, but tab removal is disabled for now.");
     }
   };
 
   const setTabToActive = (tabId: number) => {
-    tabs = tabs.map((tab) => ({
-      ...tab,
-      isActive: tab.id === tabId,
-    }));
+    tabs.update((all) => {
+      return all.map((tab) => ({
+        ...tab,
+        isActive: tab.id === tabId,
+      }));
+    });
+    activeTabId.set(tabId);
+
+    console.log("Active tab set to:", tabId, $activeTabId);
   };
 
   function handleSort(e: any) {
-    tabs = e.detail.items;
+    tabs.update(() => e.detail.items);
   }
 </script>
 
@@ -92,18 +99,18 @@
         e.currentTarget.scrollBy({ left: scrollAmount, behavior: "smooth" });
       }}
       use:dndzone={{
-        items: tabs,
+        items: $tabs,
         flipDurationMs: 150,
         type: "tabs",
       }}
       onconsider={handleSort}
       onfinalize={handleSort}
-      class="flex gap-2 items-center overflow-x-auto tab-scrollbar"
+      class="flex gap-2 items-center overflow-x-auto tab-scrollbar pr-2 pl-2"
     >
-      {#each tabs as tab (tab.id)}
+      {#each $tabs as tab (tab.id)}
         <div
           animate:flip={{ duration: 150 }}
-          class={`flex items-center p-2 rounded-t-lg h-7 w-32 ${tab.isActive ? "bg-highlight" : "bg-secondary-bg"}`}
+          class={`flex items-center p-2 rounded-t-lg h-7 w-32 ${tab.isActive ? "bg-highlight" : "bg-secondary-bg"} cursor-pointer`}
           role="button"
           tabindex="0"
           onclick={() => setTabToActive(tab.id)}
@@ -117,7 +124,12 @@
           <span class="overflow-hidden text-ellipsis whitespace-nowrap flex-1"
             >{tab.name}</span
           >
-          <button class="ml-5 z-10" onclick={() => removeTab(tab.id)}>X</button>
+          <button
+            class="ml-5 z-10"
+            onclick={(e) => {
+              e.stopPropagation(), removeTab(tab.id);
+            }}>X</button
+          >
         </div>
       {/each}
     </div>
@@ -151,5 +163,20 @@
 
   .tab-scrollbar::-webkit-scrollbar-thumb:hover {
     background: #555;
+  }
+
+  .tab-scrollbar * {
+    cursor: default !important;
+  }
+
+  /* svelte-ignore unused-selector */
+  .tab-scrollbar [data-dndzone-item]:hover {
+    cursor: grab !important;
+  }
+
+  /* svelte-ignore unused-selector */
+  .tab-scrollbar .dnd-action-item-dragging,
+  .tab-scrollbar [data-dndzone-item][style*="cursor"] {
+    cursor: grabbing !important;
   }
 </style>

@@ -10,6 +10,13 @@ const config = {
   kit: {
     adapter: adapter(),
   },
+  onwarn: (warning, handler) => {
+    const { code, frame } = warning;
+    if (code === "css-unused-selector") {
+      return;
+    }
+    handler(warning);
+  },
 };
 
 export default config;

@@ -7,10 +7,11 @@ type TabType = {
 };
 
 export const nextTabId = writable(2);
+export const activeTabId = writable<number>(1);
 export const tabs = writable<TabType[]>([
   {
     id: 1,
-    name: "Home",
+    name: "aaaaaaaaaaaaaaaaaaaaaaaaaaa",
     isActive: true,
   },
 ]);
