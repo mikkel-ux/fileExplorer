@@ -50,7 +50,8 @@
     tabs.update((all) => all.filter((tab) => tab.id !== tabId));
     console.log("Tab removed:", tabId);
     if ($tabs.length > 0) {
-      setTabToActive($tabs[0].id);
+      const lastOpenTab = $tabs[$tabs.length - 1];
+      setTabToActive(lastOpenTab.id);
     }
   };
 
@@ -64,7 +65,6 @@
         removeTab(activeTab.id);
         console.log(activeTab, $activeTabId);
       }
-      console.log("Ctrl + W pressed, but tab removal is disabled for now.");
     }
   };
 
@@ -76,8 +76,6 @@
       }));
     });
     activeTabId.set(tabId);
-
-    console.log("Active tab set to:", tabId, $activeTabId);
   };
 
   function handleSort(e: any) {
@@ -105,7 +103,7 @@
       }}
       onconsider={handleSort}
       onfinalize={handleSort}
-      class="flex gap-2 items-center overflow-x-auto tab-scrollbar pr-2 pl-2"
+      class="flex gap-2 items-center overflow-x-auto tab-scrollbar"
     >
       {#each $tabs as tab (tab.id)}
         <div
