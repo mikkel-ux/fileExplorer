@@ -2,29 +2,26 @@
   import { getCurrentWindow } from "@tauri-apps/api/window";
   import { dndzone } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
-  import { tabs, nextTabId, activeTabId } from "../stores/tabsStore";
-
-  type Tab = {
-    name: string;
-    id: number;
-    isActive?: boolean;
-  };
+  import { fly, fade } from "svelte/transition";
+  import {
+    tabs,
+    nextTabId,
+    activeTabId,
+    isDragging,
+  } from "../stores/tabsStore";
+  import { tick } from "svelte";
 
   const appWindow = getCurrentWindow();
 
   const minimize = () => {
-    console.log("Minimizing window");
-
     appWindow.minimize();
   };
 
   const toggleMaximize = () => {
-    console.log("Toggling window maximize state");
     appWindow.toggleMaximize();
   };
 
   const close = () => {
-    console.log("Closing window");
     appWindow.close();
   };
 
@@ -46,9 +43,10 @@
     console.log("New tab added:", newTab);
   };
 
-  const removeTab = (tabId: number) => {
+  const removeTab = async (tabId: number) => {
     tabs.update((all) => all.filter((tab) => tab.id !== tabId));
-    console.log("Tab removed:", tabId);
+    await tick();
+
     if ($tabs.length > 0) {
       const lastOpenTab = $tabs[$tabs.length - 1];
       setTabToActive(lastOpenTab.id);
@@ -79,6 +77,7 @@
   };
 
   function handleSort(e: any) {
+    isDragging.set(e.type === "finalize" ? false : true);
     tabs.update(() => e.detail.items);
   }
 </script>
@@ -98,38 +97,78 @@
       }}
       use:dndzone={{
         items: $tabs,
-        flipDurationMs: 150,
         type: "tabs",
+        flipDurationMs: 150,
       }}
       onconsider={handleSort}
       onfinalize={handleSort}
-      class="flex gap-2 items-center overflow-x-auto tab-scrollbar"
+      class="flex gap-2 items-center overflow-x-auto tab-scrollbar overflow-y-hidden"
     >
-      {#each $tabs as tab (tab.id)}
-        <div
-          animate:flip={{ duration: 150 }}
-          class={`flex items-center p-2 rounded-t-lg h-7 w-32 ${tab.isActive ? "bg-highlight" : "bg-secondary-bg"} cursor-pointer`}
-          role="button"
-          tabindex="0"
-          onclick={() => setTabToActive(tab.id)}
-          onkeydown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              setTabToActive(tab.id);
-            }
-          }}
-        >
-          <span class="overflow-hidden text-ellipsis whitespace-nowrap flex-1"
-            >{tab.name}</span
+      {#if !$isDragging}
+        {#each $tabs as tab (tab.id)}
+          <div
+            animate:flip={{ duration: 100 }}
+            in:fly={{ y: 10, duration: 200 }}
+            out:fade={{ duration: 200 }}
+            class={`flex items-center p-2 rounded-t-lg h-7 w-32 ${tab.isActive ? "bg-highlight" : "bg-secondary-bg"} cursor-pointer`}
+            role="button"
+            tabindex="0"
+            onclick={() => setTabToActive(tab.id)}
+            onkeydown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setTabToActive(tab.id);
+              }
+            }}
           >
-          <button
-            class="ml-5 z-10"
-            onclick={(e) => {
-              e.stopPropagation(), removeTab(tab.id);
-            }}>X</button
+            <span
+              class="overflow-hidden text-ellipsis whitespace-nowrap flex-1"
+            >
+              {tab.name}
+            </span>
+            <button
+              class="ml-5 z-10"
+              onclick={(e) => {
+                e.stopPropagation();
+                removeTab(tab.id);
+              }}
+            >
+              X
+            </button>
+          </div>
+        {/each}
+      {:else}
+        {#each $tabs as tab (tab.id)}
+          <div
+            animate:flip={{ duration: 100 }}
+            class={`flex items-center p-2 rounded-t-lg h-7 w-32 ${tab.isActive ? "bg-highlight" : "bg-secondary-bg"} cursor-pointer`}
+            role="button"
+            tabindex="0"
+            onclick={() => setTabToActive(tab.id)}
+            onkeydown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setTabToActive(tab.id);
+              }
+            }}
           >
-        </div>
-      {/each}
+            <span
+              class="overflow-hidden text-ellipsis whitespace-nowrap flex-1"
+            >
+              {tab.name}
+            </span>
+            <button
+              class="ml-5 z-10"
+              onclick={(e) => {
+                e.stopPropagation();
+                removeTab(tab.id);
+              }}
+            >
+              X
+            </button>
+          </div>
+        {/each}
+      {/if}
     </div>
     <button
       class="bg-secondary-bg text-white p-2 rounded-t-lg h-7 w-7 flex items-center justify-center justify-self-center"
@@ -145,6 +184,10 @@
 </section>
 
 <style>
+  .tab-scrollbar {
+    transition: width 0.15s ease;
+  }
+
   .tab-scrollbar::-webkit-scrollbar {
     height: 5px;
   }
@@ -165,11 +208,6 @@
 
   .tab-scrollbar * {
     cursor: default !important;
-  }
-
-  /* svelte-ignore unused-selector */
-  .tab-scrollbar [data-dndzone-item]:hover {
-    cursor: grab !important;
   }
 
   /* svelte-ignore unused-selector */
