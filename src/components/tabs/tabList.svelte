@@ -1,0 +1,83 @@
+<script lang="ts">
+  import { flip } from "svelte/animate";
+  import { fade, fly } from "svelte/transition";
+  import { tabs, isDragging } from "../../stores/tabsStore";
+
+  let { onTabClick = () => {}, onTabClose = () => {} } = $props();
+</script>
+
+{#if !$isDragging}
+  {#each $tabs as tab (tab.id)}
+    <div
+      animate:flip={{ duration: 100 }}
+      in:fly={{ y: 10, duration: 200 }}
+      out:fade={{ duration: 200 }}
+      class={`flex items-center p-2 rounded-t-lg h-7 w-32 ${tab.isActive ? "bg-highlight" : "bg-secondary-bg"} cursor-pointer`}
+      role="button"
+      tabindex="0"
+      onclick={() => onTabClick(tab.id)}
+      onkeydown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onTabClick(tab.id);
+        }
+      }}
+    >
+      <span class="overflow-hidden text-ellipsis whitespace-nowrap flex-1">
+        {tab.name}
+      </span>
+      <button
+        class="ml-5 z-10"
+        onclick={(e) => {
+          e.stopPropagation();
+          onTabClose(tab.id);
+        }}
+      >
+        X
+      </button>
+    </div>
+  {/each}
+{:else}
+  {#each $tabs as tab (tab.id)}
+    <div
+      animate:flip={{ duration: 100 }}
+      class={`flex items-center p-2 rounded-t-lg h-7 w-32 ${tab.isActive ? "bg-highlight" : "bg-secondary-bg"} test`}
+      role="button"
+      tabindex="0"
+      onclick={() => onTabClick(tab.id)}
+      onkeydown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onTabClick(tab.id);
+        }
+      }}
+    >
+      <span class="overflow-hidden text-ellipsis whitespace-nowrap flex-1">
+        {tab.name}
+      </span>
+      <button
+        class="ml-5 z-10"
+        onclick={(e) => {
+          e.stopPropagation();
+          onTabClose(tab.id);
+        }}
+      >
+        X
+      </button>
+    </div>
+  {/each}
+{/if}
+
+<style>
+  .test {
+    cursor: pointer !important; /* Changed from 'grab' to 'pointer' */
+  }
+
+  [role="listi"][style*="cursor"] {
+    cursor: grabbing !important;
+  }
+
+  .test:hover {
+    cursor: pointer !important; /* Changed from 'grab' to 'pointer' */
+  }
+</style>

@@ -1,10 +1,5 @@
 import { writable } from "svelte/store";
-
-type TabType = {
-  id: number;
-  name: string;
-  isActive: boolean;
-};
+import type { TabType } from "../../type";
 
 export const nextTabId = writable(2);
 export const activeTabId = writable<number>(1);

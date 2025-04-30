@@ -3,6 +3,7 @@
   import { dndzone } from "svelte-dnd-action";
   import { flip } from "svelte/animate";
   import { fly, fade } from "svelte/transition";
+  import TabList from "./tabs/tabList.svelte";
   import {
     tabs,
     nextTabId,
@@ -104,71 +105,7 @@
       onfinalize={handleSort}
       class="flex gap-2 items-center overflow-x-auto tab-scrollbar overflow-y-hidden"
     >
-      {#if !$isDragging}
-        {#each $tabs as tab (tab.id)}
-          <div
-            animate:flip={{ duration: 100 }}
-            in:fly={{ y: 10, duration: 200 }}
-            out:fade={{ duration: 200 }}
-            class={`flex items-center p-2 rounded-t-lg h-7 w-32 ${tab.isActive ? "bg-highlight" : "bg-secondary-bg"} cursor-pointer`}
-            role="button"
-            tabindex="0"
-            onclick={() => setTabToActive(tab.id)}
-            onkeydown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                setTabToActive(tab.id);
-              }
-            }}
-          >
-            <span
-              class="overflow-hidden text-ellipsis whitespace-nowrap flex-1"
-            >
-              {tab.name}
-            </span>
-            <button
-              class="ml-5 z-10"
-              onclick={(e) => {
-                e.stopPropagation();
-                removeTab(tab.id);
-              }}
-            >
-              X
-            </button>
-          </div>
-        {/each}
-      {:else}
-        {#each $tabs as tab (tab.id)}
-          <div
-            animate:flip={{ duration: 100 }}
-            class={`flex items-center p-2 rounded-t-lg h-7 w-32 ${tab.isActive ? "bg-highlight" : "bg-secondary-bg"} cursor-pointer`}
-            role="button"
-            tabindex="0"
-            onclick={() => setTabToActive(tab.id)}
-            onkeydown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                setTabToActive(tab.id);
-              }
-            }}
-          >
-            <span
-              class="overflow-hidden text-ellipsis whitespace-nowrap flex-1"
-            >
-              {tab.name}
-            </span>
-            <button
-              class="ml-5 z-10"
-              onclick={(e) => {
-                e.stopPropagation();
-                removeTab(tab.id);
-              }}
-            >
-              X
-            </button>
-          </div>
-        {/each}
-      {/if}
+      <TabList onTabClick={setTabToActive} onTabClose={removeTab} />
     </div>
     <button
       class="bg-secondary-bg text-white p-2 rounded-t-lg h-7 w-7 flex items-center justify-center justify-self-center"
@@ -210,7 +147,16 @@
     cursor: default !important;
   }
 
-  /* svelte-ignore unused-selector */
+  /* Changed 'grab' to 'pointer' for elements targeted by dndzone */
+  .tab-scrollbar [data-dndzone-item]:hover {
+    cursor: pointer !important;
+  }
+
+  /* Overrides inline style "cursor: grab" */
+  .tab-scrollbar div[style*="cursor: grab"] {
+    cursor: pointer !important;
+  }
+
   .tab-scrollbar .dnd-action-item-dragging,
   .tab-scrollbar [data-dndzone-item][style*="cursor"] {
     cursor: grabbing !important;
