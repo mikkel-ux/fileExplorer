@@ -1,37 +1,55 @@
-<script lang="ts">
-  let draggedEl: HTMLElement | null = null;
+<script>
+  let item = { id: 1, name: "Draggable Item" };
 
-  function handlePointerDown(event: PointerEvent) {
-    const target = event.currentTarget as HTMLElement;
-    draggedEl = target;
-    target.setPointerCapture(event.pointerId);
-    target.style.position = "absolute";
-    target.style.zIndex = "1000";
+  function handleDragStart(event) {
+    console.log("Drag start:", item);
+    event.dataTransfer.setData("text/plain", item.id);
+    event.dataTransfer.effectAllowed = "move"; // Allow move operation
   }
 
-  function handlePointerMove(event: PointerEvent) {
-    if (!draggedEl) return;
-    draggedEl.style.left = `${event.clientX - draggedEl.offsetWidth / 2}px`;
-    draggedEl.style.top = `${event.clientY - draggedEl.offsetHeight / 2}px`;
+  function handleDrop(event) {
+    event.preventDefault();
+    console.log("Drop event triggered");
+    const itemId = event.dataTransfer.getData("text/plain");
+    console.log("Dropped item ID:", itemId);
+    // Handle the drop logic here if needed
   }
 
-  function handlePointerUp(event: PointerEvent) {
-    if (draggedEl) {
-      draggedEl.style.position = "";
-      draggedEl.style.left = "";
-      draggedEl.style.top = "";
-      draggedEl.style.zIndex = "";
-      draggedEl.releasePointerCapture(event.pointerId);
-      draggedEl = null;
-    }
+  function handleDragOver(event) {
+    event.preventDefault();
+    console.log("Drag over event triggered");
+    event.dataTransfer.dropEffect = "move"; // Indicate move operation
   }
 </script>
 
-<div
-  on:pointerdown={handlePointerDown}
-  on:pointermove={handlePointerMove}
-  on:pointerup={handlePointerUp}
-  class="bg-blue-500 p-4 text-white w-fit rounded cursor-pointer select-none"
->
-  Drag me manually
+<div>
+  <div
+    class="box"
+    role="group"
+    aria-label="Draggable Box"
+    on:drop={handleDrop}
+    on:dragover={handleDragOver}
+  >
+    <h3>Drag and Drop Box</h3>
+    <div class="item" draggable="true" on:dragstart={handleDragStart}>
+      {item.name}
+    </div>
+  </div>
 </div>
+
+<style>
+  .box {
+    width: 200px;
+    height: 200px;
+    border: 1px solid #000;
+    margin: 20px;
+    padding: 10px;
+  }
+
+  .item {
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #ccc;
+    cursor: grab;
+  }
+</style>
