@@ -100,6 +100,7 @@
         items: $tabs,
         type: "tabs",
         flipDurationMs: 150,
+        dropTargetStyle: {},
       }}
       onconsider={handleSort}
       onfinalize={handleSort}
@@ -141,24 +142,5 @@
 
   .tab-scrollbar::-webkit-scrollbar-thumb:hover {
     background: #555;
-  }
-
-  .tab-scrollbar * {
-    cursor: default !important;
-  }
-
-  /* Changed 'grab' to 'pointer' for elements targeted by dndzone */
-  .tab-scrollbar [data-dndzone-item]:hover {
-    cursor: pointer !important;
-  }
-
-  /* Overrides inline style "cursor: grab" */
-  .tab-scrollbar div[style*="cursor: grab"] {
-    cursor: pointer !important;
-  }
-
-  .tab-scrollbar .dnd-action-item-dragging,
-  .tab-scrollbar [data-dndzone-item][style*="cursor"] {
-    cursor: grabbing !important;
   }
 </style>

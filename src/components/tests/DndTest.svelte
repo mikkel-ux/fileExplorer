@@ -46,7 +46,7 @@
   >
     {#each zone2Items as item (item.id)}
       <div
-        class="p-4 bg-gray-200 m-2 rounded-lg text-black"
+        class="p-4 bg-gray-200 m-2 rounded-lg text-black test"
         draggable="true"
         animate:flip={{ duration: flipDurationMs }}
       >
@@ -55,3 +55,9 @@
     {/each}
   </section>
 </div>
+
+<style>
+  .test {
+    cursor: pointer !important;
+  }
+</style>

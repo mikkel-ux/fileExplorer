@@ -21,6 +21,7 @@
     items: tabs,
     flipDurationMs: 150,
     type: "tabs",
+    dropTargetStyle: {},
   }}
   on:consider={handleSort}
   on:finalize={handleSort}
@@ -28,7 +29,8 @@
   {#each tabs as tab (tab.id)}
     <div
       animate:flip={{ duration: 150 }}
-      class="p-4 bg-gray-200 m-2 rounded-lg text-black cursor-pointer active:cursor-grabbing"
+      class="p-4 bg-gray-200 m-2 rounded-lg text-black test"
+      style="cursor: pointer;"
       tabindex="0"
       role="button"
       data-id={tab.id}
@@ -43,3 +45,14 @@
     </div>
   {/each}
 </div>
+
+<style>
+  .test {
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer !important;
+    transition: background-color 0.3s ease;
+  }
+</style>

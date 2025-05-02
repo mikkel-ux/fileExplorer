@@ -7,23 +7,6 @@ mod search;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .setup(|app| {
-            tauri::WebviewWindowBuilder::new(
-                app,
-                "main",
-                tauri::WebviewUrl::App("index.html".into()),
-            )
-            .title("File Explorer")
-            .inner_size(1000.0, 500.0)
-            .resizable(true)
-            .decorations(false)
-            .transparent(false)
-            .disable_drag_drop_handler()
-            .build()
-            .expect("Failed to create main window");
-
-            Ok(())
-        })
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             search::search_files,
@@ -41,5 +24,24 @@ pub fn run() {
         .title("Tab - home")
         .build()
         .expect("Failed to create tab-1 window");
+    Ok(())
+}) */
+
+//if dnd is not working try using this again
+/* .setup(|app| {
+    tauri::WebviewWindowBuilder::new(
+        app,
+        "main",
+        tauri::WebviewUrl::App("index.html".into()),
+    )
+    .title("File Explorer")
+    .inner_size(1000.0, 500.0)
+    .resizable(true)
+    .decorations(false)
+    .transparent(false)
+    .disable_drag_drop_handler()
+    .build()
+    .expect("Failed to create main window");
+
     Ok(())
 }) */
