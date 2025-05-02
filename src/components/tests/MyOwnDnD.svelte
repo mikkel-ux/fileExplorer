@@ -1,55 +1,61 @@
-<script>
-  let item = { id: 1, name: "Draggable Item" };
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<script lang="ts">
+  let containers = [
+    { id: "div1", items: ["item1"] },
+    { id: "div2", items: [] },
+  ];
 
-  function handleDragStart(event) {
-    console.log("Drag start:", item);
-    event.dataTransfer.setData("text/plain", item.id);
-    event.dataTransfer.effectAllowed = "move"; // Allow move operation
+  let items = ["item1", "item2"];
+
+  let draggedItem: string | null = null;
+
+  function handleDragStart(item: string) {
+    draggedItem = item;
   }
 
-  function handleDrop(event) {
-    event.preventDefault();
-    console.log("Drop event triggered");
-    const itemId = event.dataTransfer.getData("text/plain");
-    console.log("Dropped item ID:", itemId);
-    // Handle the drop logic here if needed
-  }
+  function handleDrop(targetContainer: string) {
+    if (draggedItem) {
+      containers = containers
+        .map((container) => {
+          // Remove from all
+          return {
+            ...container,
+            items: container.items.filter((i) => i !== draggedItem),
+          };
+        })
+        .map((container) => {
+          // Add to target
+          if (container.id === targetContainer) {
+            return {
+              ...container,
+              items: [...container.items, draggedItem!],
+            };
+          }
+          return container;
+        });
 
-  function handleDragOver(event) {
-    event.preventDefault();
-    console.log("Drag over event triggered");
-    event.dataTransfer.dropEffect = "move"; // Indicate move operation
+      draggedItem = null;
+    }
   }
 </script>
 
-<div>
-  <div
-    class="box"
-    role="group"
-    aria-label="Draggable Box"
-    on:drop={handleDrop}
-    on:dragover={handleDragOver}
-  >
-    <h3>Drag and Drop Box</h3>
-    <div class="item" draggable="true" on:dragstart={handleDragStart}>
-      {item.name}
+<section class="flex gap-10">
+  {#each containers as container}
+    <div
+      id={container.id}
+      class="w-20 h-20 bg-blue-600 flex justify-center items-center"
+      ondrop={() => handleDrop(container.id)}
+      ondragover={(e) => {
+        e.preventDefault();
+      }}
+    >
+      {#each container.items as item}
+        <div
+          class="w-10 h-10 bg-pink-600"
+          draggable="true"
+          ondragstart={() => handleDragStart(item)}
+        ></div>
+      {/each}
     </div>
-  </div>
-</div>
-
-<style>
-  .box {
-    width: 200px;
-    height: 200px;
-    border: 1px solid #000;
-    margin: 20px;
-    padding: 10px;
-  }
-
-  .item {
-    padding: 10px;
-    margin: 5px;
-    border: 1px solid #ccc;
-    cursor: grab;
-  }
-</style>
+  {/each}
+</section>
