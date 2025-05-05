@@ -4,8 +4,8 @@
   import { goto } from "$app/navigation";
   import { addToHistory } from "../stores/historyStore";
   import { getPath, setPath } from "../stores/pathStore";
-  import MyOwnDnD from "../components/tests/MyOwnDnD.svelte";
   import TabsDrag from "../components/tests/TabsDrag.svelte";
+  import Resize from "../components/tests/resize.svelte";
 
   import Button from "../components/Button.svelte";
   import ArrowButton from "../components/ArrowButton.svelte";
@@ -25,14 +25,13 @@
 </script>
 
 <main class="h-full flex flex-col justify-center items-center">
-  <button
+  <!-- <button
     class="bg-blue-500 p-2 rounded-lg mt-4"
     onclick={() => navigateToPage()}
   >
     Go to other page
-  </button>
-
-  <!-- <MyOwnDnD /> -->
+  </button> -->
 
   <!-- <TabsDrag /> -->
+  <Resize />
 </main>

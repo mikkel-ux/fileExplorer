@@ -1,8 +1,6 @@
 <script lang="ts">
   import { getCurrentWindow } from "@tauri-apps/api/window";
   import { dndzone } from "svelte-dnd-action";
-  import { flip } from "svelte/animate";
-  import { fly, fade } from "svelte/transition";
   import TabList from "./tabs/tabList.svelte";
   import {
     tabs,
@@ -11,6 +9,7 @@
     isDragging,
   } from "../stores/tabsStore";
   import { tick } from "svelte";
+  import { get } from "svelte/store";
 
   const appWindow = getCurrentWindow();
 
@@ -41,16 +40,42 @@
 
     tabs.update((all) => [...all, newTab]);
     setTabToActive(id);
-    console.log("New tab added:", newTab);
   };
 
   const removeTab = async (tabId: number) => {
-    tabs.update((all) => all.filter((tab) => tab.id !== tabId));
-    await tick();
+    /* tabs.update((all) => all.filter((tab) => tab.id !== tabId));
+    await tick(); */
 
-    if ($tabs.length > 0) {
+    /* if ($tabs.length > 0) {
       const lastOpenTab = $tabs[$tabs.length - 1];
       setTabToActive(lastOpenTab.id);
+    } */
+
+    /* if ($tabs.length > 0) {
+      const checkForLeftTabs = $tabs.find((tab) => tab.id !== tabId);
+      if (checkForLeftTabs) {
+        setTabToActive(checkForLeftTabs.id);
+      }
+    } */
+
+    const currentTabs = get(tabs);
+    const tabIndex = currentTabs.findIndex((tab) => tab.id === tabId);
+
+    if (tabIndex === -1) return;
+
+    const newTabs = currentTabs.filter((tab) => tab.id !== tabId);
+    tabs.set(newTabs);
+    await tick();
+
+    if (newTabs.length === 0) return;
+
+    const leftTabBar = newTabs[tabIndex - 1];
+
+    const rightTabBar = newTabs[tabIndex] ?? newTabs[newTabs.length - 1];
+
+    const nextActive = leftTabBar ?? rightTabBar;
+    if (nextActive) {
+      setTabToActive(nextActive.id);
     }
   };
 
@@ -62,7 +87,6 @@
       const activeTab = $tabs.find((tab) => tab.id === $activeTabId);
       if (activeTab) {
         removeTab(activeTab.id);
-        console.log(activeTab, $activeTabId);
       }
     }
   };
@@ -109,7 +133,8 @@
       <TabList onTabClick={setTabToActive} onTabClose={removeTab} />
     </div>
     <button
-      class="bg-secondary-bg text-white p-2 rounded-t-lg h-7 w-7 flex items-center justify-center justify-self-center"
+      class="bg-secondary-bg text-white p-2 rounded-t-lg h-7 w-7 flex items-center justify-center justify-self-center
+      hover:bg-highlight hover:opacity-90 transition-all ease-in-out"
       onclick={addNewTab}>+</button
     >
   </div>
