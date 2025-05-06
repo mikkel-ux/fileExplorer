@@ -59,7 +59,7 @@
   onconsider={handleFoo2Sort}
   onfinalize={handleFoo2Sort}
 >
-  {#each items2 as item, i (item.id)}
+  {#each items2 as item (item.id)}
     <div class="h-full border-2 border-gray-200 relative group w-full">
       <div class="flex items-center justify-center h-full bg-gray-200">
         <span class="text-black">{item.name}</span>
@@ -78,22 +78,22 @@
   onconsider={handleFooSort}
   onfinalize={handleFooSort}
 >
-  {#each items as item, i (item.id)}
+  {#each items as item, index (item.id)}
     <div
       class="h-full border-2 border-gray-200 relative group"
-      style={`width: ${i === 0 ? box1Ratio * 100 : (1 - box1Ratio) * 100}%`}
+      style={`width: ${index === 0 ? box1Ratio * 100 : (1 - box1Ratio) * 100}%`}
     >
       <div class="flex items-center justify-center h-full bg-gray-200">
-        <span class="text-black">{item.name}</span>
+        <span class="text-black">{item.id}</span>
         <span
           use:dragHandle
-          aria-label="drag-handle for {item.name}"
+          aria-label="drag-handle for {item.id}"
           class="ml-2 cursor-move text-black">::</span
         >
       </div>
     </div>
 
-    {#if i === 0 && items.length > 1}
+    {#if index === 0 && items.length > 1}
       <button
         type="button"
         class="right-0 top-0 h-full w-2 cursor-col-resize bg-[#ccc] hover:bg-[#999] appearance-none border-none p-0"
