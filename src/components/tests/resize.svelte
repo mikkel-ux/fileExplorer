@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { log } from "@tensorflow/tfjs";
   import { dndzone, dragHandle, dragHandleZone } from "svelte-dnd-action";
 
   type itemType = { id: number; name: string; isActive: boolean };
 
   let isDraggingActive: boolean = $state(false);
+  let dropInSplitView: boolean = $state(false);
 
   let box1Ratio: number = $state(0.5);
   let isDragging: boolean = $state(false);
@@ -47,8 +47,22 @@
   };
 
   function handleFooSort(e: any) {
+    const draggedItem = e.detail.info.id;
+    console.log("draggedItem", draggedItem);
+    const draggedItemIndex = items.findIndex((item) => item.id === draggedItem);
+    if (draggedItemIndex !== -1) {
+      isDraggingActive = items[draggedItemIndex].isActive;
+    }
+
     items = e.detail.items;
   }
+
+  function handleFoo3Sort(e: any) {
+    isDraggingActive = false;
+    dropInSplitView = items.length === 2 || false;
+    items = e.detail.items;
+  }
+
   function handleFoo2Sort(e: any) {
     items2 = e.detail.items;
   }
@@ -59,8 +73,8 @@
   use:dndzone={{
     items: items2,
     centreDraggedOnCursor: true,
-    type: "foo",
-    dropFromOthersDisabled: true,
+    type: "tabs",
+    dropFromOthersDisabled: isDraggingActive,
   }}
   onconsider={handleFoo2Sort}
   onfinalize={handleFoo2Sort}
@@ -81,10 +95,11 @@
   use:dragHandleZone={{
     items,
     centreDraggedOnCursor: true,
-    type: "foo",
+    type: "tabs",
+    dropFromOthersDisabled: dropInSplitView,
   }}
   onconsider={handleFooSort}
-  onfinalize={handleFooSort}
+  onfinalize={handleFoo3Sort}
 >
   {#each items as item, index (item.id)}
     <div
