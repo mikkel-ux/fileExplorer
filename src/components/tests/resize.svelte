@@ -1,13 +1,16 @@
 <script lang="ts">
+  import { log } from "@tensorflow/tfjs";
   import { dndzone, dragHandle, dragHandleZone } from "svelte-dnd-action";
 
-  type itemType = { id: number; name: string };
+  type itemType = { id: number; name: string; isActive: boolean };
+
+  let isDraggingActive: boolean = $state(false);
 
   let box1Ratio: number = $state(0.5);
   let isDragging: boolean = $state(false);
   let items: itemType[] = $state([
-    { id: 1, name: "Item 1" },
-    { id: 2, name: "Item 2" },
+    { id: 1, name: "Item 1", isActive: false },
+    { id: 2, name: "Item 2", isActive: true },
   ]);
 
   let items2: itemType[] = $state([]);
@@ -55,6 +58,9 @@
   class="flex flex-row p-2 gap-5 border-2 border-gray-400 rounded-lg h-40 w-full max-w-xl"
   use:dndzone={{
     items: items2,
+    centreDraggedOnCursor: true,
+    type: "foo",
+    dropFromOthersDisabled: true,
   }}
   onconsider={handleFoo2Sort}
   onfinalize={handleFoo2Sort}
@@ -67,23 +73,27 @@
     </div>
   {/each}
 </section>
-<!-- TODO fix the error that happens when trying to drag the view on the right of the button -->
+
+<br />
 <section
   id="resize-container"
-  class="flex flex-row p-2 border-2 border-gray-400 rounded-lg h-40 w-full max-w-xl"
+  class="relative border-2 border-gray-400 rounded-lg h-40 w-full max-w-xl flex flex-row p-0.5"
   use:dragHandleZone={{
-    items: items,
-    dragDisabled: isDragging,
+    items,
+    centreDraggedOnCursor: true,
+    type: "foo",
   }}
   onconsider={handleFooSort}
   onfinalize={handleFooSort}
 >
   {#each items as item, index (item.id)}
     <div
-      class="h-full border-2 border-gray-200 relative group"
+      class="h-full"
       style={`width: ${index === 0 ? box1Ratio * 100 : (1 - box1Ratio) * 100}%`}
     >
-      <div class="flex items-center justify-center h-full bg-gray-200">
+      <div
+        class={`flex items-center justify-center h-full ${index === 0 ? "bg-gray-200" : "bg-gray-300"}`}
+      >
         <span class="text-black">{item.id}</span>
         <span
           use:dragHandle
@@ -92,15 +102,16 @@
         >
       </div>
     </div>
+  {/each}
 
-    {#if index === 0 && items.length > 1}
+  <div class="absolute top-0 left-0 h-full w-full pointer-events-none">
+    {#if items.length > 1}
       <button
         type="button"
-        class="right-0 top-0 h-full w-2 cursor-col-resize bg-[#ccc] hover:bg-[#999] appearance-none border-none p-0"
+        class="absolute top-0 h-full w-2 cursor-col-resize bg-[#ccc] hover:bg-[#999] appearance-none border-none p-0 z-10 pointer-events-auto"
+        style={`left: calc(${box1Ratio * 100}% - 1px);`}
         onmousedown={startDragging}
         aria-label="Resize views"
-        aria-describedby="resize-hint"
-        tabindex="0"
         onkeydown={(e) => {
           if (e.key === "ArrowLeft")
             box1Ratio = Math.max(0.1, box1Ratio - 0.01);
@@ -109,5 +120,5 @@
         }}
       ></button>
     {/if}
-  {/each}
+  </div>
 </section>
