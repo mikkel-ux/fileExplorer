@@ -58,6 +58,10 @@
       }
     } */
 
+    if ($tabs.length === 1) {
+      close();
+    }
+
     const currentTabs = get(tabs);
     const tabIndex = currentTabs.findIndex((tab) => tab.id === tabId);
 
@@ -104,6 +108,7 @@
   function handleSort(e: any) {
     isDragging.set(e.type === "finalize" ? false : true);
     tabs.update(() => e.detail.items);
+    console.log("items", $tabs);
   }
 </script>
 
@@ -128,7 +133,7 @@
       }}
       onconsider={handleSort}
       onfinalize={handleSort}
-      class="flex gap-2 items-center overflow-x-auto tab-scrollbar overflow-y-hidden"
+      class="flex gap-2 items-center overflow-x-auto tab-scrollbar overflow-y-hidden min-w-2 min-h-7"
     >
       <TabList onTabClick={setTabToActive} onTabClose={removeTab} />
     </div>

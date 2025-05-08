@@ -11,3 +11,5 @@ export const tabs = writable<TabType[]>([
   },
 ]);
 export const isDragging = writable(false);
+
+type TabStore = {};

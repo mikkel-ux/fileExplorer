@@ -1,7 +1,10 @@
 <script lang="ts">
+  import { flip } from "svelte/animate";
   import { dndzone, dragHandle, dragHandleZone } from "svelte-dnd-action";
 
   type itemType = { id: number; name: string; isActive: boolean };
+
+  let flipDurationMs: number = 150;
 
   let isDraggingActive: boolean = $state(false);
   let dropInSplitView: boolean = $state(false);
@@ -47,13 +50,6 @@
   };
 
   function handleFooSort(e: any) {
-    const draggedItem = e.detail.info.id;
-    console.log("draggedItem", draggedItem);
-    const draggedItemIndex = items.findIndex((item) => item.id === draggedItem);
-    if (draggedItemIndex !== -1) {
-      isDraggingActive = items[draggedItemIndex].isActive;
-    }
-
     items = e.detail.items;
   }
 
@@ -66,6 +62,19 @@
   function handleFoo2Sort(e: any) {
     items2 = e.detail.items;
   }
+
+  const transformDraggedElement = (
+    draggedEl: HTMLElement,
+    data: any,
+    index: any
+  ) => {
+    draggedEl.style.opacity = "0.5";
+    const draggedItem = data.id;
+    const draggedItemIndex = items.findIndex((item) => item.id === draggedItem);
+    if (draggedItemIndex !== -1) {
+      isDraggingActive = items[draggedItemIndex].isActive;
+    }
+  };
 </script>
 
 <section
@@ -75,6 +84,8 @@
     centreDraggedOnCursor: true,
     type: "tabs",
     dropFromOthersDisabled: isDraggingActive,
+    /* @ts-ignore */
+    transformDraggedElement,
   }}
   onconsider={handleFoo2Sort}
   onfinalize={handleFoo2Sort}
@@ -94,9 +105,11 @@
   class="relative border-2 border-gray-400 rounded-lg h-40 w-full max-w-xl flex flex-row p-0.5"
   use:dragHandleZone={{
     items,
-    centreDraggedOnCursor: true,
+    flipDurationMs: flipDurationMs,
     type: "tabs",
     dropFromOthersDisabled: dropInSplitView,
+    /* @ts-ignore */
+    transformDraggedElement,
   }}
   onconsider={handleFooSort}
   onfinalize={handleFoo3Sort}
@@ -105,6 +118,7 @@
     <div
       class="h-full"
       style={`width: ${index === 0 ? box1Ratio * 100 : (1 - box1Ratio) * 100}%`}
+      animate:flip={{ duration: flipDurationMs }}
     >
       <div
         class={`flex items-center justify-center h-full ${index === 0 ? "bg-gray-200" : "bg-gray-300"}`}
