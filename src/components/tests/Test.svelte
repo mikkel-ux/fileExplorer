@@ -17,7 +17,7 @@
     canGoForward,
     activeViews,
     activeTabIndex,
-  } from "../../stores/testTabsStore";
+  } from "../../stores/tabsStore";
   import { onMount } from "svelte";
   import { v4 as uuidv4 } from "uuid";
 

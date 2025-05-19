@@ -1,7 +1,7 @@
 <script lang="ts">
   import { flip } from "svelte/animate";
   import { fade, fly } from "svelte/transition";
-  import { tabs, isDragging } from "../../stores/tabsStore";
+  import { tabs, isDragging } from "../../stores/test-TabsStore";
 
   let { onTabClick = () => {}, onTabClose = () => {} } = $props();
 </script>

@@ -1,18 +1,18 @@
-export type TabType = {
+export type testTabType = {
   id: number;
   name: string;
   isActive: boolean;
 };
 
-export type tabType = {
+export type TabType = {
   id: number;
   layout: "single" | "split";
-  view: viewType[];
+  view: ViewType[];
   splitRatio: number;
   activeViewId: string;
 };
 
-export type viewType = {
+export type ViewType = {
   id: string;
   title: string;
   image: string;

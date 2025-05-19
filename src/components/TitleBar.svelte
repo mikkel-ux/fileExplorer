@@ -7,7 +7,7 @@
     nextTabId,
     activeTabId,
     isDragging,
-  } from "../stores/tabsStore";
+  } from "../stores/test-TabsStore";
   import { tick } from "svelte";
   import { get } from "svelte/store";
 
