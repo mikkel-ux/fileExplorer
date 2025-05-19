@@ -4,10 +4,13 @@ import type { tabType, viewType } from "../../type";
 import { v4 as uuidv4 } from "uuid";
 
 const appWindow = getCurrentWindow();
+const firstTabUuid = uuidv4();
+
+//=========================
+// writable stores that are not exported
+//=========================
 
 const nextTabId = writable(2);
-
-const firstTabUuid = uuidv4();
 
 //=========================
 // Window Management
@@ -24,7 +27,8 @@ function close() {
 function createTab() {
   const id = get(nextTabId);
   const viewId = uuidv4();
-
+  /* TODO change image to the right image path */
+  /* TODO change the first history path to the right one for "Home" */
   const newView: viewType = {
     id: viewId,
     title: `Tab ${id}`,
@@ -87,6 +91,7 @@ function updateActiveView(
 //=========================
 // exported stores
 //=========================
+
 export const activeTabId = writable<number>(1);
 export const tabsStore = writable<tabType[]>([
   {
@@ -137,13 +142,6 @@ export const removeTab = (id: number) => {
 };
 
 export const setActiveTab = (id: number) => {
-  tabsStore.update((tabs) => {
-    return tabs.map((tab) => ({
-      ...tab,
-      isActive: tab.id === id,
-    }));
-  });
-
   activeTabId.set(id);
 };
 
@@ -290,8 +288,8 @@ export const getHistory = () => {
 
 export const canGoBack = derived(
   [tabsStore, activeTabId],
-  ([$historyStore, $activeTabId]) => {
-    const tab = $historyStore.find((tab) => tab.id === $activeTabId);
+  ([$tabStore, $activeTabId]) => {
+    const tab = $tabStore.find((tab) => tab.id === $activeTabId);
     const activeView = tab?.view.find((v) => v.id === tab?.activeViewId);
     return activeView ? activeView.currentIndex > 0 : false;
   }
@@ -299,8 +297,8 @@ export const canGoBack = derived(
 
 export const canGoForward = derived(
   [tabsStore, activeTabId],
-  ([$historyStore, $activeTabId]) => {
-    const tab = $historyStore.find((tab) => tab.id === $activeTabId);
+  ([$tabStore, $activeTabId]) => {
+    const tab = $tabStore.find((tab) => tab.id === $activeTabId);
     const activeView = tab?.view.find((v) => v.id === tab?.activeViewId);
     return activeView
       ? activeView.currentIndex < activeView.history.length - 1
