@@ -4,8 +4,7 @@
     removeTab,
     setActiveTab,
     activeTabId,
-    activeViewPerTab,
-    testTabsStore,
+    tabsStore,
     addView,
     removeView,
     setActiveView,
@@ -16,13 +15,14 @@
     getCurrentPath,
     canGoBack,
     canGoForward,
-    activeTabIndex,
     activeViews,
+    activeTabIndex,
   } from "../../stores/testTabsStore";
   import { onMount } from "svelte";
+  import { v4 as uuidv4 } from "uuid";
 
   onMount(() => {
-    console.log("Tabs:", $testTabsStore);
+    console.log("Tabs:", $tabsStore);
   });
 
   const updateTheHistory = () => {
@@ -44,22 +44,26 @@
   };
 
   const addNewView = () => {
+    const newViewId = uuidv4();
     const newView = {
-      id: 0,
+      id: newViewId,
       title: "New View",
       image: "path/to/image.png",
       history: ["/"],
       currentIndex: 0,
+      activeTabId: newViewId,
     };
-    addView($activeTabId, newView);
+    addView(newView);
   };
 
-  const removeExistingView = () => {
-    const activeTab = $activeTabId;
-    removeView($activeTabId, $activeViewPerTab[activeTab]);
+  const removeExistingView = (viewId: string) => {
+    /* const activeTab = $activeTabId;
+    removeView($activeTabId, $activeViewPerTab[activeTab]); */
+    removeView($activeTabId, viewId);
+    console.log("remove view");
   };
 
-  const changeCurentView = (viewid: number) => {
+  const changeCurentView = (viewid: string) => {
     setActiveView(viewid);
     const history = getHistory();
     const currentPath = getCurrentPath();
@@ -85,11 +89,14 @@
 
   const activeTab = (tabId: number) => {
     setActiveTab(tabId);
+    const history = getHistory();
     console.log(
       "Active Tab ID:",
       tabId,
       "Tabs:",
-      $testTabsStore[$activeTabIndex].view
+      $tabsStore[$activeTabIndex].view,
+      "history:",
+      history
     );
   };
 </script>
@@ -117,15 +124,17 @@
   <button class="bg-blue-500 p-2 rounded-lg mt-4" onclick={addNewView}
     >addView</button
   >
-  <button class="bg-blue-500 p-2 rounded-lg mt-4" onclick={removeExistingView}
-    >removeView</button
-  >
+
   <div class="flex flex-row gap-2">
     {#each $activeViews as view}
-      <button
-        class="bg-blue-500 p-2 rounded-lg mt-4"
-        onclick={() => changeCurentView(view.id)}>view {view.id}</button
-      >
+      <div>
+        <button
+          class="bg-blue-500 p-2 rounded-lg mt-4"
+          onclick={() => changeCurentView(view.id)}
+          >view {view.id.slice(0, 3)}
+        </button>
+        <button onclick={() => removeExistingView(view.id)}> x </button>
+      </div>
     {/each}
   </div>
 </div>
@@ -134,10 +143,9 @@
   <button class="bg-blue-500 p-2 rounded-lg mt-4" onclick={addNewTab}
     >addNewTab</button
   >
-  {#each $testTabsStore as tab}
+  {#each $tabsStore as tab}
     <div class="bg-gray-200 p-2 rounded-lg text-black">
       <p>{tab.id}</p>
-      <p>{tab.isActive}</p>
       <button
         class="bg-blue-500 p-2 rounded-lg"
         onclick={() => activeTab(tab.id)}>active tab</button

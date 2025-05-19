@@ -6,14 +6,14 @@ export type TabType = {
 
 export type tabType = {
   id: number;
-  isActive: boolean;
   layout: "single" | "split";
   view: viewType[];
   splitRatio: number;
+  activeViewId: string;
 };
 
 export type viewType = {
-  id: number;
+  id: string;
   title: string;
   image: string;
   history: string[];
