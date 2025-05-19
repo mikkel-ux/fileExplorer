@@ -2,12 +2,20 @@
   import { getCurrentWindow } from "@tauri-apps/api/window";
   import { dndzone } from "svelte-dnd-action";
   import TabList from "./tabs/tabList.svelte";
-  import {
+  /* import {
     tabs,
     nextTabId,
     activeTabId,
     isDragging,
-  } from "../stores/test-TabsStore";
+  } from "../stores/test-TabsStore"; */
+  import {
+    tabsStore,
+    activeTabId,
+    isDragging,
+    addTab,
+    setActiveTab,
+    removeTab,
+  } from "../stores/tabsStore";
   import { tick } from "svelte";
   import { get } from "svelte/store";
 
@@ -26,61 +34,12 @@
   };
 
   const addNewTab = () => {
-    let id: number = 0;
-    nextTabId.update((n) => {
-      id = n;
-      return n + 1;
-    });
-
-    const newTab = {
-      name: `Tab ${$tabs.length + 1}`,
-      id,
-      isActive: false,
-    };
-
-    tabs.update((all) => [...all, newTab]);
-    setTabToActive(id);
+    addTab();
   };
 
-  const removeTab = async (tabId: number) => {
-    /* tabs.update((all) => all.filter((tab) => tab.id !== tabId));
-    await tick(); */
-
-    /* if ($tabs.length > 0) {
-      const lastOpenTab = $tabs[$tabs.length - 1];
-      setTabToActive(lastOpenTab.id);
-    } */
-
-    /* if ($tabs.length > 0) {
-      const checkForLeftTabs = $tabs.find((tab) => tab.id !== tabId);
-      if (checkForLeftTabs) {
-        setTabToActive(checkForLeftTabs.id);
-      }
-    } */
-
-    if ($tabs.length === 1) {
-      close();
-    }
-
-    const currentTabs = get(tabs);
-    const tabIndex = currentTabs.findIndex((tab) => tab.id === tabId);
-
-    if (tabIndex === -1) return;
-
-    const newTabs = currentTabs.filter((tab) => tab.id !== tabId);
-    tabs.set(newTabs);
+  const closeTab = async (id: number) => {
+    removeTab(id);
     await tick();
-
-    if (newTabs.length === 0) return;
-
-    const leftTabBar = newTabs[tabIndex - 1];
-
-    const rightTabBar = newTabs[tabIndex] ?? newTabs[newTabs.length - 1];
-
-    const nextActive = leftTabBar ?? rightTabBar;
-    if (nextActive) {
-      setTabToActive(nextActive.id);
-    }
   };
 
   const handleKeyDown = (event: KeyboardEvent) => {
@@ -88,27 +47,21 @@
       addNewTab();
     }
     if (event.ctrlKey && event.key.toLocaleLowerCase() === "w") {
-      const activeTab = $tabs.find((tab) => tab.id === $activeTabId);
+      const activeTab = $tabsStore.find((tab) => tab.id === $activeTabId);
       if (activeTab) {
-        removeTab(activeTab.id);
+        closeTab(activeTab.id);
       }
     }
   };
 
-  const setTabToActive = (tabId: number) => {
-    tabs.update((all) => {
-      return all.map((tab) => ({
-        ...tab,
-        isActive: tab.id === tabId,
-      }));
-    });
-    activeTabId.set(tabId);
+  const activeTab = (id: number) => {
+    setActiveTab(id);
   };
 
   function handleSort(e: any) {
     isDragging.set(e.type === "finalize" ? false : true);
-    tabs.update(() => e.detail.items);
-    console.log("items", $tabs);
+    tabsStore.update(() => e.detail.items);
+    console.log("items", $tabsStore);
   }
 </script>
 
@@ -126,16 +79,16 @@
         e.currentTarget.scrollBy({ left: scrollAmount, behavior: "smooth" });
       }}
       use:dndzone={{
-        items: $tabs,
+        items: $tabsStore,
         type: "tabs",
         flipDurationMs: 150,
         dropTargetStyle: {},
       }}
       onconsider={handleSort}
       onfinalize={handleSort}
-      class="flex gap-2 items-center overflow-x-auto tab-scrollbar overflow-y-hidden min-w-2 min-h-7"
+      class="flex gap-2 items-center overflow-x-auto overflow-y-hidden tab-scrollbar min-w-2 min-h-7"
     >
-      <TabList onTabClick={setTabToActive} onTabClose={removeTab} />
+      <TabList onTabClick={activeTab} onTabClose={closeTab} />
     </div>
     <button
       class="bg-secondary-bg text-white p-2 rounded-t-lg h-7 w-7 flex items-center justify-center justify-self-center
@@ -152,9 +105,9 @@
 </section>
 
 <style>
-  .tab-scrollbar {
+  /* .tab-scrollbar {
     transition: width 0.15s ease;
-  }
+  } */
 
   .tab-scrollbar::-webkit-scrollbar {
     height: 5px;
@@ -172,5 +125,14 @@
 
   .tab-scrollbar::-webkit-scrollbar-thumb:hover {
     background: #555;
+  }
+
+  .tab-scrollbar {
+    transition: all 0.2s ease;
+  }
+
+  .tab-scrollbar::-webkit-scrollbar {
+    opacity: 1;
+    transition: opacity 0.3s ease;
   }
 </style>
