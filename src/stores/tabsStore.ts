@@ -1,3 +1,5 @@
+//# allFunctionsCalledOnLoad
+
 import { writable, get, derived } from "svelte/store";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import type { TabType, ViewType } from "../../type";
@@ -92,6 +94,7 @@ function updateActiveView(
 // exported stores
 //=========================
 
+export const isDragging = writable(false);
 export const activeTabId = writable<number>(1);
 export const tabsStore = writable<TabType[]>([
   {

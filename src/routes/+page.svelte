@@ -7,6 +7,7 @@
   import TabsDrag from "../components/tests/TabsDrag.svelte";
   import Resize from "../components/tests/resize.svelte";
   import Test from "../components/tests/Test.svelte";
+  import View from "./View.svelte";
 
   import Button from "../components/Button.svelte";
   import ArrowButton from "../components/ArrowButton.svelte";
@@ -36,5 +37,7 @@
   <!-- <TabsDrag /> -->
   <!-- <Resize /> -->
 
-  <Test />
+  <!-- <Test /> -->
+
+  <View />
 </main>
