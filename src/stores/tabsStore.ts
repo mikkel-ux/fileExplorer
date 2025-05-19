@@ -47,6 +47,7 @@ function createTab() {
     activeViewId: viewId,
   };
   nextTabId.update((n) => n + 1);
+  activeTabId.set(id);
   return newTab;
 }
 

@@ -10,9 +10,8 @@
 {#if !$isDragging}
   {#each $tabsStore as tab (tab.id)}
     <div
-      animate:flip={{ duration: 100 }}
-      in:fly={{ y: 10, duration: 200 }}
-      out:fade={{ duration: 200 }}
+      in:fly={{ y: 10, duration: 150 }}
+      out:fade={{ duration: 150 }}
       class={`flex items-center p-2 rounded-t-lg h-7 w-32 ${tab.id === $activeTabId ? "bg-highlight" : "bg-secondary-bg"} tab`}
       role="button"
       tabindex="0"

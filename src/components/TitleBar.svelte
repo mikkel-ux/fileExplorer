@@ -92,7 +92,7 @@
     </div>
     <button
       class="bg-secondary-bg text-white p-2 rounded-t-lg h-7 w-7 flex items-center justify-center justify-self-center
-      hover:bg-highlight hover:opacity-90 transition-all ease-in-out"
+      hover:bg-highlight hover:opacity-90 transition-opacity transition-highlight ease-in-out"
       onclick={addNewTab}>+</button
     >
   </div>
@@ -105,9 +105,12 @@
 </section>
 
 <style>
-  /* .tab-scrollbar {
+  .tab-scrollbar {
+    overflow-x: auto;
+    scrollbar-gutter: stable;
+    transform-style: preserve-3d;
     transition: width 0.15s ease;
-  } */
+  }
 
   .tab-scrollbar::-webkit-scrollbar {
     height: 5px;
@@ -127,12 +130,12 @@
     background: #555;
   }
 
-  .tab-scrollbar {
-    transition: all 0.2s ease;
+  /* .tab-scrollbar {
+    transition: opacity 0.3s ease;
   }
 
   .tab-scrollbar::-webkit-scrollbar {
     opacity: 1;
     transition: opacity 0.3s ease;
-  }
+  } */
 </style>
