@@ -42,9 +42,35 @@
   }; */
 </script>
 
-<div class="flex flex-col h-screen">
+<div class="h-screen w-full grid grid-cols-[10%_1fr] grid-rows-[10%_15%_1fr]">
   <TitleBar />
-  <header class="bg-gray-800 text-white p-4 grid grid-cols-[auto_1fr] gap-4">
+  <header
+    class="col-start-2 bg-gray-800 text-white p-4 grid grid-cols-[auto_1fr] gap-4"
+  >
+    <section class="flex gap-2">
+      <ArrowButton
+        direction="left"
+        disabled={!canGoBackValue}
+        on:click={() => navigateBack()}
+      ></ArrowButton>
+
+      <ArrowButton
+        direction="right"
+        disabled={!canGoForwardValue}
+        on:click={() => navigateForward()}
+      ></ArrowButton>
+    </section>
+    <!-- <Search /> -->
+  </header>
+  <section
+    class="border-r-2 p-4 border-black bg-secondary-bg col-start-1 row-start-2 row-end-4"
+  >
+    <p>home</p>
+  </section>
+
+  {@render children()}
+
+  <!-- <header class="bg-gray-800 text-white p-4 grid grid-cols-[auto_1fr] gap-4">
     <div class="flex gap-2">
       <ArrowButton
         direction="left"
@@ -57,17 +83,12 @@
         disabled={!canGoForwardValue}
         on:click={() => navigateForward()}
       ></ArrowButton>
-    </div>
+    </div> -->
 
-    <!-- <Search /> -->
-  </header>
-
-  <main class="flex-1">
-    <div class="grid grid-cols-[auto_1fr] h-full">
-      <div class="border-r-2 p-4 border-black">
-        <p>home</p>
-      </div>
-      {@render children()}
-    </div>
-  </main>
+  <!-- <Search /> -->
+  <!-- </header> -->
 </div>
+
+<!-- <main class="col-span-2">
+    {@render children()}
+  </main> -->

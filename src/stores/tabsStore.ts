@@ -104,7 +104,7 @@ export const tabsStore = writable<TabType[]>([
     view: [
       {
         id: firstTabUuid,
-        title: "Tab 1",
+        title: "view 1",
         image: "image1.png",
         history: ["/"],
         currentIndex: 0,

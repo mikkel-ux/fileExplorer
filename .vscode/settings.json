@@ -2,5 +2,6 @@
   "svelte.enable-ts-plugin": true,
   "svelte.plugin.svelte.compilerWarnings": {
     "css-unused-selector": "ignore"
-  }
+  },
+  "tailwindCSS.experimental.configFile": "src/app.css"
 }

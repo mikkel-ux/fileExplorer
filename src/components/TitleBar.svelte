@@ -67,7 +67,10 @@
 
 <svelte:window onkeydown={handleKeyDown} />
 
-<section data-tauri-drag-region class="flex pl-5 pr-1 gap-5">
+<section
+  data-tauri-drag-region
+  class="col-span-2 row-start-1 row-end-1 flex pr-1 gap-5"
+>
   <div
     class="flex-1 gap-2 flex items-end overflow-hidden pt-3"
     data-tauri-drag-region
@@ -108,7 +111,6 @@
   .tab-scrollbar {
     overflow-x: auto;
     scrollbar-gutter: stable;
-    transform-style: preserve-3d;
     transition: width 0.15s ease;
   }
 
