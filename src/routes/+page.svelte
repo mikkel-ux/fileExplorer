@@ -26,7 +26,7 @@
   }) */
 </script>
 
-<main class="h-full flex flex-col justify-center items-center">
+<main class="h-full w-full">
   <!-- <button
     class="bg-blue-500 p-2 rounded-lg mt-4"
     onclick={() => navigateToPage()}

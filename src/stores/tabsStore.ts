@@ -253,6 +253,7 @@ export const goBack = () => {
       };
     });
   });
+  return getCurrentPath();
 };
 
 export const goForward = () => {
@@ -266,6 +267,7 @@ export const goForward = () => {
       ),
     }));
   });
+  return getCurrentPath();
 };
 
 export const getCurrentPath = () => {

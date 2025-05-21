@@ -89,7 +89,7 @@
       }}
       onconsider={handleSort}
       onfinalize={handleSort}
-      class="flex gap-2 items-center overflow-x-auto overflow-y-hidden tab-scrollbar min-w-2 min-h-7"
+      class="flex gap-1.5 items-center overflow-x-auto overflow-y-hidden tab-scrollbar min-w-2 min-h-7"
     >
       <TabList onTabClick={activeTab} onTabClose={closeTab} />
     </div>
@@ -110,7 +110,6 @@
 <style>
   .tab-scrollbar {
     overflow-x: auto;
-    scrollbar-gutter: stable;
     transition: width 0.15s ease;
   }
 
