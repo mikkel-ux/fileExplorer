@@ -12,7 +12,7 @@
   }); */
 
     try {
-      let test = await invoke("get_files_in_dirs", {
+      let test = await invoke("get_files_dirs_in_dir", {
         path: "C:/Users/rumbo/.testFoulderForFE",
       });
       console.log("test", test);
