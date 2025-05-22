@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
 
-  let widthRatio: number = $state(200); // Default width
+  let widthRatio: number = $state(200);
   let isResizing = false;
 
   const startResize = (e: MouseEvent) => {

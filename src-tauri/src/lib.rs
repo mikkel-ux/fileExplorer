@@ -14,6 +14,7 @@ pub fn run() {
             files::get_dirs,
             files::get_files,
             files::get_path,
+            files::test_get_files_in_dirs
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

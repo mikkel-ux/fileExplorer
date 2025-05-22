@@ -1,24 +1,46 @@
-<script lang="ts"></script>
+<script lang="ts">
+  import { onMount } from "svelte";
+  import { goto } from "$app/navigation";
+  import { updateHistory, getCurrentPath } from "../stores/tabsStore";
+  import { invoke } from "@tauri-apps/api/core";
 
-<section class="test">
-  <div>
-    <h2>test</h2>
-  </div>
+  onMount(async () => {
+    invoke("test_get_files_in_dirs", {
+      path: "C:/Users/rumbo/.testFoulderForFE",
+    });
+  });
+</script>
+
+<section
+  class="grid grid-cols-5 grid-rows-[repeat(1fr)] gap-4 justify-items-center text-center"
+>
+  <div class="bg-blue-950 w-20 h-20">box1</div>
+  <div class="bg-blue-950 w-20 h-20">box2</div>
+  <div class="bg-blue-950 w-20 h-20">box3</div>
+  <div class="bg-blue-950 w-20 h-20">box4</div>
+  <div class="bg-blue-950 w-20 h-20">box5</div>
+
+  <div class="bg-blue-950 w-20 h-20">box1</div>
+  <div class="bg-blue-950 w-20 h-20">box2</div>
+  <div class="bg-blue-950 w-20 h-20">box3</div>
+  <div class="bg-blue-950 w-20 h-20">box4</div>
+  <div class="bg-blue-950 w-20 h-20">box5</div>
 </section>
 
 <style>
-  .test {
-    container-type: inline-size;
-    background-color: blue;
+  @container (max-width: 500px) {
+    /* h2 {
+      color: red;
+    } */
+
+    section {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
   }
 
-  h2 {
-    font-size: 5cqi;
-  }
-
-  @container (min-width: 400px) {
-    h2 {
-      color: black;
+  @container (max-width: 300px) {
+    section {
+      grid-template-columns: 1fr;
     }
   }
 </style>

@@ -41,3 +41,9 @@
 
   <View />
 </main>
+
+<style>
+  main {
+    container-type: inline-size;
+  }
+</style>
