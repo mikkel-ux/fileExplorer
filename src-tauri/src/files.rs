@@ -1,5 +1,8 @@
 use dirs::{desktop_dir, document_dir, download_dir, home_dir, picture_dir, video_dir};
-use std::fs::{self, DirEntry};
+use serde::Serialize;
+use std::fs::{self, DirEntry, Permissions};
+use std::os::windows::fs::MetadataExt;
+use std::path::Path;
 use std::path::PathBuf;
 
 #[tauri::command]
@@ -80,7 +83,7 @@ fn test_impl() {
     assert_eq!(file_data.get_number(), 42);
     assert_eq!(FileData::boo(), "boo");
 } */
-
+#[derive(Debug, Clone, Serialize)]
 pub struct FileData {
     name: String,
     path: String,
@@ -90,21 +93,81 @@ pub struct FileData {
     modified: std::time::SystemTime,
     accessed: std::time::SystemTime,
     is_dir: bool,
+    permissions: u32,
+    is_hidden: bool,
+    is_read_only: bool,
 }
 
-#[tauri::command]
-pub fn test_get_files_in_dirs(path: String) {
+impl FileData {
+    pub fn from_path(path: &Path) -> Option<Self> {
+        let metadata = fs::metadata(path).ok()?;
+        let name = path.file_name()?.to_str()?.to_string();
+        let extension = path
+            .extension()
+            .and_then(|s| s.to_str())
+            .unwrap_or("")
+            .to_string();
+        let created = metadata
+            .created()
+            .unwrap_or(std::time::SystemTime::UNIX_EPOCH);
+        let modified = metadata
+            .modified()
+            .unwrap_or(std::time::SystemTime::UNIX_EPOCH);
+        let accessed = metadata
+            .accessed()
+            .unwrap_or(std::time::SystemTime::UNIX_EPOCH);
+        let is_dir = metadata.is_dir();
+        let attrs: u32 = metadata.file_attributes();
+        let permissions = attrs;
+        let is_hidden = attrs & 0x2 != 0; // FILE_ATTRIBUTE_HIDDEN
+        let is_read_only = attrs & 0x1 != 0; // FILE_ATTRIBUTE_READONLY
+        let size = metadata.len();
+
+        Some(Self {
+            name,
+            path: path.to_string_lossy().to_string(),
+            size,
+            extension,
+            created,
+            modified,
+            accessed,
+            is_dir,
+            permissions,
+            is_hidden,
+            is_read_only,
+        })
+    }
+}
+
+#[test]
+fn idk() {
+    let path = "C:/Users/rumbo/.testFoulderForFE";
+    let test = FileData::from_path(Path::new(path));
+    println!("test: {:?}", test);
+    println!(" ");
+
     let files = fs::read_dir(path).unwrap();
     for file in files {
         let entry = file.unwrap();
-        let metadata = entry.metadata().unwrap();
-        println!("Name: {}", entry.file_name().to_str().unwrap());
-        println!("Path: {}", entry.path().to_str().unwrap());
-        println!("Size: {}", metadata.len());
-        println!("Created: {:?}", metadata.created().unwrap());
-        println!("Modified: {:?}", metadata.modified().unwrap());
-        println!("is dir: {:?}", metadata.is_dir());
-        println!("extension {:?}", entry.path().extension());
+        let path = entry.path();
+        let foo = FileData::from_path(&path);
+        println!("foo: {:?}", foo);
         println!(" ");
     }
+    println!(" ");
+}
+
+#[tauri::command]
+pub fn get_files_in_dirs(path: String) -> Result<Vec<FileData>, String> {
+    let mut file_data_list = Vec::new();
+    let files = fs::read_dir(path).map_err(|e| format!("Error reading directory: {}", e))?;
+    for file in files {
+        let entry = file.map_err(|e| format!("Error reading entry: {}", e))?;
+        let path = entry.path();
+        if path.is_dir() == false {
+            let file_data = FileData::from_path(&path).ok_or("Failed to get file data")?;
+            file_data_list.push(file_data);
+        }
+    }
+    Ok(file_data_list)
 }

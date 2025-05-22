@@ -5,9 +5,20 @@
   import { invoke } from "@tauri-apps/api/core";
 
   onMount(async () => {
-    invoke("test_get_files_in_dirs", {
-      path: "C:/Users/rumbo/.testFoulderForFE",
+    /* let test = await invoke("test_get_files_in_dirs", {
+      path: "C:/Users/rumbo/.testFoulderForFE/test",
     });
+    console.log("test", test);
+  }); */
+
+    try {
+      let test = await invoke("get_files_in_dirs", {
+        path: "C:/Users/rumbo/.testFoulderForFE",
+      });
+      console.log("test", test);
+    } catch (error) {
+      console.log("error", error);
+    }
   });
 </script>
 
