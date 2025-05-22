@@ -12,7 +12,6 @@ pub fn run() {
             search::search_files,
             search::search_test,
             files::get_dirs,
-            files::get_files,
             files::get_path,
             files::get_files_dirs_in_dir
         ])

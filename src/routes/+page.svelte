@@ -26,7 +26,7 @@
   }) */
 </script>
 
-<main class="h-full w-full">
+<main class="h-full w-full overflow-y-auto overflow-x-hidden">
   <!-- <button
     class="bg-blue-500 p-2 rounded-lg mt-4"
     onclick={() => navigateToPage()}
@@ -45,5 +45,23 @@
 <style>
   main {
     container-type: inline-size;
+  }
+
+  main::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  main::-webkit-scrollbar-track {
+    background: #fff;
+    border-radius: 10px;
+  }
+
+  main::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+
+  main::-webkit-scrollbar-thumb:hover {
+    background: #555;
   }
 </style>

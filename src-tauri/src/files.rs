@@ -1,27 +1,9 @@
 use chrono::{DateTime, Local};
 use dirs::{desktop_dir, document_dir, download_dir, home_dir, picture_dir, video_dir};
 use serde::Serialize;
-use std::fs::{self, DirEntry, Permissions};
-use std::os::windows::fs::MetadataExt;
+use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
-
-#[tauri::command]
-pub fn get_files() {
-    let path = desktop_dir().unwrap();
-    let files = fs::read_dir(path).unwrap();
-    for file in files {
-        let entry = file.unwrap();
-        let metadata = entry.metadata().unwrap();
-        println!("Name: {}", entry.file_name().to_str().unwrap());
-        println!("Path: {}", entry.path().to_str().unwrap());
-        println!("Size: {}", metadata.len());
-        println!("Created: {:?}", metadata.created().unwrap());
-        println!("Modified: {:?}", metadata.modified().unwrap());
-        println!("Accessed: {:?}", metadata.is_dir());
-        println!(" ");
-    }
-}
 
 #[tauri::command]
 pub fn get_dirs(path: String) -> Result<Vec<String>, String> {
@@ -54,36 +36,6 @@ pub fn get_path(path: String) -> Result<String, String> {
 
     Ok(dir_path.display().to_string().replace("\\", "/"))
 }
-
-//============
-//test
-//============
-/* #[derive(Debug, serde::Serialize, serde::Deserialize)]
-pub struct FileData {
-    number: i32,
-}
-
-impl FileData {
-    fn boo() -> String {
-        "boo".to_string()
-    }
-
-    fn foo(&mut self) {
-        self.number += 42;
-    }
-
-    fn get_number(&self) -> i32 {
-        self.number
-    }
-}
-
-#[test]
-fn test_impl() {
-    let mut file_data = FileData { number: 0 };
-    file_data.foo();
-    assert_eq!(file_data.get_number(), 42);
-    assert_eq!(FileData::boo(), "boo");
-} */
 
 pub fn format_size(bytes: u64) -> String {
     const UNITS: [&str; 5] = ["B", "KB", "MB", "GB", "TB"];
@@ -175,24 +127,6 @@ impl FileData {
     }
 }
 
-#[test]
-fn idk() {
-    let path = "C:/Users/rumbo/.testFoulderForFE";
-    let test = FileData::from_path(Path::new(path));
-    println!("test: {:?}", test);
-    println!(" ");
-
-    let files = fs::read_dir(path).unwrap();
-    for file in files {
-        let entry = file.unwrap();
-        let path = entry.path();
-        let foo = FileData::from_path(&path);
-        println!("foo: {:?}", foo);
-        println!(" ");
-    }
-    println!(" ");
-}
-
 #[tauri::command]
 pub fn get_files_dirs_in_dir(path: String) -> Result<Vec<FileData>, String> {
     let mut file_data_list = Vec::new();
@@ -204,4 +138,18 @@ pub fn get_files_dirs_in_dir(path: String) -> Result<Vec<FileData>, String> {
         file_data_list.push(file_data);
     }
     Ok(file_data_list)
+}
+
+#[test]
+fn idk() {
+    let path = "C:/Users/rumbo/.testFoulderForFE";
+    let files = fs::read_dir(path).unwrap();
+    for file in files {
+        let entry = file.unwrap();
+        let path = entry.path();
+        let foo = FileData::from_path(&path);
+        println!("foo: {:?}", foo);
+        println!(" ");
+    }
+    println!(" ");
 }
