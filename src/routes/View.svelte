@@ -4,25 +4,13 @@
   import { updateHistory, getCurrentPath } from "../stores/tabsStore";
   import { invoke } from "@tauri-apps/api/core";
   import { Folder, Inspect } from "@lucide/svelte";
+  import type { FileDataType } from "../../type";
 
-  type fileDataType = {
-    name: string;
-    path: string;
-    size: string;
-    extension: string;
-    created: string;
-    modified: string;
-    accessed: string;
-    type: string;
-    permissions: number;
-    isHidden: boolean;
-    isReadOnly: boolean;
-  };
-
-  let files = $state<fileDataType[]>([]);
+  let files = $state<FileDataType[]>([]);
   let clickTimer = $state<NodeJS.Timeout | null>(null);
   let enterTimer = $state<NodeJS.Timeout | null>(null);
-  let highlightedFile = $state<fileDataType | null>(null);
+  let highlightedFile = $state<FileDataType | null>(null);
+  let { seclectedFile = $bindable<FileDataType>() } = $props();
 
   onMount(async () => {
     try {
@@ -35,7 +23,7 @@
     }
   });
 
-  const handleClick = (file: fileDataType) => {
+  const handleClick = (file: FileDataType) => {
     if (clickTimer) {
       clearTimeout(clickTimer);
       clickTimer = null;
@@ -44,6 +32,7 @@
       clickTimer = setTimeout(() => {
         console.log("single click");
         console.log($state.snapshot(file));
+        seclectedFile = file;
         highlightedFile = file;
 
         clickTimer = null;
@@ -51,7 +40,7 @@
     }
   };
 
-  const handleKeyDown = (e: KeyboardEvent, file: fileDataType) => {
+  const handleKeyDown = (e: KeyboardEvent, file: FileDataType) => {
     if (e.key === "Enter") {
       e.preventDefault();
       if (enterTimer) {

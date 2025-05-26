@@ -15,7 +15,7 @@
 
   const resize = (e: MouseEvent) => {
     if (isResizing) {
-      widthRatio = Math.min(Math.max(100, e.clientX), 800);
+      widthRatio = Math.min(500, Math.max(100, e.clientX));
     }
   };
 
@@ -30,13 +30,16 @@
   });
 </script>
 
-<div style={`width: ${widthRatio}px`} class="flex h-full">
-  <div class="bg-gray-800 text-white flex-grow">
+<div
+  style={`width: ${widthRatio}px`}
+  class="flex h-full relative flex-shrink-0 flex-grow-0"
+>
+  <div class="flex-grow bg-gray-800 text-white">
     <p>Home</p>
   </div>
 
   <button
-    class="resize-handle"
+    class="resize-handle absolute top-0 right-0 h-full w-2 cursor-col-resize"
     onmousedown={startResize}
     aria-label="Resize sidebar"
     onkeydown={(e) => {

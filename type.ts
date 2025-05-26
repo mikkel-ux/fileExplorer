@@ -19,3 +19,17 @@ export type ViewType = {
   history: string[];
   currentIndex: number;
 };
+
+export type FileDataType = {
+  name: string;
+  path: string;
+  size: string;
+  extension: string;
+  created: string;
+  modified: string;
+  accessed: string;
+  type: string;
+  permissions: number;
+  isHidden: boolean;
+  isReadOnly: boolean;
+};

@@ -45,12 +45,10 @@
   };
 </script>
 
-<div
-  class="h-full w-full grid grid-cols-[auto_1fr] grid-rows-[auto_auto_1fr] min-h-0"
->
+<div class="h-full w-full flex flex-col min-h-0">
   <TitleBar />
   <header
-    class="col-span-2 bg-gray-800 text-white p-4 grid grid-cols-[auto_1fr] gap-4 border-b-4 border-black"
+    class="bg-gray-800 text-white p-4 grid grid-cols-[auto_1fr] gap-4 border-b-4 border-black"
   >
     <section class="flex gap-2">
       <ArrowButton
@@ -67,9 +65,6 @@
     </section>
     <!-- <Search /> -->
   </header>
-  <section class="col-start-1 row-start-3 row-end-4 overflow-hidden">
-    <Sidebar />
-  </section>
 
   {@render children()}
 </div>

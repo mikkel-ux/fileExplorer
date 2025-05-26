@@ -1,11 +1,20 @@
 <script lang="ts">
+  import { fade, fly } from "svelte/transition";
+  let { closeInfo } = $props();
   const close = () => {
-    console.log("close button clicked");
+    closeInfo();
   };
 </script>
 
 <section
-  class="w-5 h-full flex flex-col gap-4 p-4 bg-red-600 hover:bg-red-700 transition-colors"
+  in:fly={{ x: 100, duration: 300 }}
+  out:fade={{ duration: 300 }}
+  class="w-2xl h-full flex flex-col gap-4 p-4 bg-red-600 transition-colors"
 >
-  <button class="btn btn-primary" on:click={() => close()}> x </button>
+  <button
+    class="btn btn-primary bg-blue-400 hover:bg-blue-900"
+    onclick={() => close()}
+  >
+    x
+  </button>
 </section>
