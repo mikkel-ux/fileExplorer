@@ -1,6 +1,7 @@
 use chrono::{DateTime, Local};
 use dirs::{desktop_dir, document_dir, download_dir, home_dir, picture_dir, video_dir};
 use serde::Serialize;
+use serde_json::ser;
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
@@ -59,9 +60,12 @@ pub struct FileData {
     created: String,
     modified: String,
     accessed: String,
-    is_dir: bool,
+    #[serde(rename = "type")]
+    file_type: String,
     permissions: u32,
+    #[serde(rename = "isHidden")]
     is_hidden: bool,
+    #[serde(rename = "isReadOnly")]
     is_read_only: bool,
 }
 
@@ -91,7 +95,12 @@ impl FileData {
         let accessed_date = DateTime::<Local>::from(accessed).format(format).to_string();
 
         let size = format_size(metadata.len());
-        let is_dir = metadata.is_dir();
+        /* let is_dir = metadata.is_dir(); */
+        let file_type = if metadata.is_dir() {
+            "folder".to_string()
+        } else {
+            "file".to_string()
+        };
 
         #[cfg(target_family = "windows")]
         let (permissions, is_hidden, is_read_only) = {
@@ -119,7 +128,7 @@ impl FileData {
             created: created_date,
             modified: modified_date,
             accessed: accessed_date,
-            is_dir,
+            file_type,
             permissions,
             is_hidden,
             is_read_only,

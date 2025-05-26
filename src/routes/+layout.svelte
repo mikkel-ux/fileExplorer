@@ -46,7 +46,7 @@
 </script>
 
 <div
-  class="h-screen w-full grid grid-cols-[auto_1fr] grid-rows-[auto_auto_1fr]"
+  class="h-full w-full grid grid-cols-[auto_1fr] grid-rows-[auto_auto_1fr] min-h-0"
 >
   <TitleBar />
   <header
