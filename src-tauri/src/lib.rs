@@ -1,6 +1,7 @@
 /* use tauri::{WebviewUrl, WebviewWindowBuilder}; */
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
+use tauri_plugin_fs::FsExt;
 mod files;
 mod search;
 
@@ -8,6 +9,7 @@ mod search;
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_fs::init())
         .invoke_handler(tauri::generate_handler![
             search::search_files,
             search::search_test,
@@ -45,3 +47,4 @@ pub fn run() {
 
     Ok(())
 }) */
+/* }) */

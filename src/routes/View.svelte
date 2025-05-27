@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import { updateHistory, getCurrentPath } from "../stores/tabsStore";
+  import { secsectFile, selectedFile } from "../stores/tabsStore";
   import { invoke } from "@tauri-apps/api/core";
   import { Folder, Inspect } from "@lucide/svelte";
   import type { FileDataType } from "../../type";
@@ -9,13 +10,11 @@
   let files = $state<FileDataType[]>([]);
   let clickTimer = $state<NodeJS.Timeout | null>(null);
   let enterTimer = $state<NodeJS.Timeout | null>(null);
-  let highlightedFile = $state<FileDataType | null>(null);
-  let { seclectedFile = $bindable<FileDataType>() } = $props();
 
   onMount(async () => {
     try {
       let result: any[] = await invoke("get_files_dirs_in_dir", {
-        path: "C:\\Users\\rumbo",
+        path: "C:\\Users\\rumbo\\OneDrive\\Billeder",
       });
       files = result;
     } catch (error) {
@@ -32,9 +31,7 @@
       clickTimer = setTimeout(() => {
         console.log("single click");
         console.log($state.snapshot(file));
-        seclectedFile = file;
-        highlightedFile = file;
-
+        secsectFile(file);
         clickTimer = null;
       }, 200);
     }
@@ -50,8 +47,8 @@
       } else {
         enterTimer = setTimeout(() => {
           console.log("single key click");
-          console.log($state.snapshot(file));
-          highlightedFile = file;
+          secsectFile(file);
+
           enterTimer = null;
         }, 200);
       }
@@ -71,7 +68,7 @@
         tabindex="0"
         class={`ffContainer w-[15cqw] h-[20cqh] rounded-lg flex flex-col items-center justify-center hover:bg-secondary-bg
       transition-bg ease-in-out
-        ${highlightedFile && highlightedFile.name === file.name ? "bg-highlight" : ""}
+        ${$selectedFile && $selectedFile.name === file.name ? "bg-highlight" : ""}
         ${file.isHidden ? "opacity-50" : ""}
       `}
         onkeydown={(e) => {

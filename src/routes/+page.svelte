@@ -4,12 +4,15 @@
   import { goto } from "$app/navigation";
   import { addToHistory } from "../stores/historyStore";
   import { getPath, setPath } from "../stores/pathStore";
+  import { selectedFile } from "../stores/tabsStore";
   import TabsDrag from "../components/tests/TabsDrag.svelte";
   import Resize from "../components/tests/resize.svelte";
   import Test from "../components/tests/Test.svelte";
   import Sidebar from "../components/Sidebar.svelte";
   import View from "./View.svelte";
   import FileFoulderInfo from "../components/FileFoulderInfo.svelte";
+
+  import ImageTest from "../components/tests/ImageTest.svelte";
 
   import type { FileDataType } from "../../type";
 
@@ -19,26 +22,11 @@
   import PropsTest from "../components/PropsTest.svelte";
 
   let value = $state(0);
-  let seclectedFile = $state<FileDataType | null>(null);
-
-  $effect(() => {
-    console.log(seclectedFile);
-  });
 
   const navigateToPage = () => {
     goto("/expolorer");
     addToHistory("/expolorer");
   };
-
-  const closeInfo = () => {
-    console.log("close info");
-
-    seclectedFile = null;
-  };
-
-  /* onMount(async () => {
-    
-  }) */
 </script>
 
 <!-- <main class="w-full h-full flex flex-row min-h-0"> -->
@@ -54,15 +42,15 @@
 
 <!-- <Test /> -->
 
-<section class="w-full h-full flex flex-row min-h-0">
+<!-- <section class="w-full h-full flex flex-row min-h-0">
   <Sidebar />
-  <View bind:seclectedFile />
-  {#if seclectedFile}
-    <FileFoulderInfo {closeInfo} />
+  <View />
+  {#if $selectedFile}
+    <FileFoulderInfo />
   {/if}
-</section>
+</section> -->
 
-<!-- </main> -->
+<ImageTest />
 
 <style>
 </style>

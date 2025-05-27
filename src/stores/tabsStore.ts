@@ -2,7 +2,7 @@
 
 import { writable, get, derived } from "svelte/store";
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import type { TabType, ViewType } from "../../type";
+import type { TabType, ViewType, FileDataType } from "../../type";
 import { v4 as uuidv4 } from "uuid";
 
 const appWindow = getCurrentWindow();
@@ -95,6 +95,7 @@ function updateActiveView(
 // exported stores
 //=========================
 
+export const selectedFile = writable<FileDataType | null>(null);
 export const isDragging = writable(false);
 export const activeTabId = writable<number>(1);
 export const tabsStore = writable<TabType[]>([
@@ -114,6 +115,17 @@ export const tabsStore = writable<TabType[]>([
     activeViewId: firstTabUuid,
   },
 ]);
+
+//=========================
+//
+//==========================
+export const secsectFile = (file: FileDataType) => {
+  selectedFile.set(file);
+};
+
+export const removeSelectedFile = () => {
+  selectedFile.set(null);
+};
 
 //=========================
 // Tab Management
