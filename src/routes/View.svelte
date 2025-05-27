@@ -56,7 +56,7 @@
   };
 </script>
 
-<section class="w-full h-full overflow-y-scroll overflow-x-hidden">
+<section class="w-full h-full overflow-y-auto overflow-x-hidden">
   <div
     class="grid grid-cols-5 grid-rows-[repeat(1fr)] gap-2 justify-items-center
   text-center pl-10 pr-10 pb-5 pt-2 select-none"

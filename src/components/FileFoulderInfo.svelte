@@ -1,65 +1,101 @@
 <script lang="ts">
   import { fade, fly } from "svelte/transition";
   import { removeSelectedFile, selectedFile } from "../stores/tabsStore";
-  import { appDataDir, join } from "@tauri-apps/api/path";
   import { convertFileSrc } from "@tauri-apps/api/core";
+  import { isImage } from "../functions/checkFileExtension";
+  import { Folder, Inspect } from "@lucide/svelte";
 
-  import { onMount } from "svelte";
+  let autoplay = $state<boolean>(true);
 
   const close = () => {
     removeSelectedFile();
   };
 
-  const getImageUrl = async (path: string) => {
-    const appData = await appDataDir();
-    const fullPath = await join(appData, path);
-    console.log("Full path:", fullPath);
-
-    return convertFileSrc(fullPath);
+  const getImageUrl = (path: string) => {
+    return convertFileSrc(path);
   };
-  const imgUrl = convertFileSrc(
-    "C:\\Users\\rumbo\\OneDrive\\Billeder\\profile_picture.png"
-  );
 
-  onMount(async () => {
-    let test = await getImageUrl(
-      "C:\\Users\\rumbo\\OneDrive\\Billeder\\profile_picture.png"
-    );
-    console.log("Test image URL:", test);
-  });
+  const stillImage = $selectedFile?.path.replace(/\.gif$/, ".png");
 </script>
 
 <section
   in:fly={{ x: 100, duration: 200 }}
   out:fade={{ duration: 200 }}
-  class="w-2xl h-full flex flex-col gap-4 p-4 bg-red-600 transition-colors text-white"
+  class="w-2xl h-full flex flex-col gap-4 p-2 bg-secondary-bg transition-colors text-white overflow-y-auto"
 >
-  <button
-    class="btn btn-primary bg-blue-400 hover:bg-blue-900"
-    onclick={() => close()}
+  <div class="flex justify-between">
+    <p class="text-2xl font-bold">Details</p>
+    <button class="font-bold hover:opacity-50" onclick={() => close()}>
+      x
+    </button>
+  </div>
+  <div
+    class="border-b-4 border-t-4 border-gray-500 flex flex-col justify-center items-center p-2 gap-2"
   >
-    x
-  </button>
-  <h1 class="text-2xl font-bold">
-    {$selectedFile ? $selectedFile.name : "No file selected"}
-  </h1>
-  <p class="text-2xl font-bold">
-    {$selectedFile ? $selectedFile.extension : "No file selected"}
-  </p>
+    {#if $selectedFile && $selectedFile.type === "folder"}
+      <Folder size="50%" />
+    {:else if $selectedFile && isImage($selectedFile)}
+      {#if autoplay && $selectedFile.extension === "gif"}
+        <p class="text-gray-400">No preview available</p>
+      {:else}
+        <img
+          src={getImageUrl($selectedFile.path)}
+          alt="Selected file"
+          class="max-h-40 sm:max-h-60 md:max-h-80 lg:max-h-[32rem] w-auto"
+        />
+      {/if}
+    {:else if $selectedFile && $selectedFile.extension === "pdf"}
+      <iframe
+        src={getImageUrl($selectedFile.path)}
+        class="w-full rounded-lg h-60"
+        scrolling="auto"
+        title="PDF Preview"
+      ></iframe>
+    {:else}
+      <p class="text-gray-400">No preview available</p>
+    {/if}
+    <p class="text-sm text-center break-all">
+      {$selectedFile ? $selectedFile.name : "No file selected"}
+    </p>
+  </div>
 
-  {#if $selectedFile?.extension === "png" || $selectedFile?.extension === "jpg" || $selectedFile?.extension === "jpeg"}
-    <!-- <img
-      src={await getImageUrl($selectedFile.path)}
-      alt="Selected file"
-      class="max-w-full max-h-96 object-cover"
-    /> -->
-    <!-- <p>image</p> -->
-    <img
-      src="http://asset.localhost/C%3A%5CUsers%5Crumbo%5CAppData%5CRoaming%5Ccom.fileexplorer.app%5CC%3A%5CUsers%5Crumbo%5COneDrive%5CBilleder%5Cprofile_picture.png"
-      alt="Selected file"
-      class="max-w-full max-h-96 object-cover"
-    />
-  {:else}
-    <p class="text-gray-300">Preview not available for this file type.</p>
-  {/if}
+  <div class="grid grid-cols-2 gap-4 text-sm">
+    <div>
+      <p class="text-gray-400">Type</p>
+      <p class="font-semibold">
+        {$selectedFile?.type === "folder"
+          ? "Folder"
+          : ($selectedFile?.extension ?? "–")}
+      </p>
+    </div>
+
+    <div>
+      <p class="text-gray-400">Size</p>
+      <p class="font-semibold">{$selectedFile?.size ?? "–"}</p>
+    </div>
+
+    <div class="col-span-2">
+      <p class="text-gray-400">Location</p>
+      <p class="break-words font-semibold">{$selectedFile?.path ?? "–"}</p>
+    </div>
+
+    <div>
+      <p class="text-gray-400">Created</p>
+      <p class="font-semibold">{$selectedFile?.created ?? "–"}</p>
+    </div>
+
+    <div>
+      <p class="text-gray-400">Modified</p>
+      <p class="font-semibold">{$selectedFile?.modified ?? "–"}</p>
+    </div>
+
+    <div class="col-span-2">
+      <p class="text-gray-400">Last Accessed</p>
+      <p class="font-semibold">{$selectedFile?.accessed ?? "–"}</p>
+    </div>
+  </div>
+
+  <div class="flex justify-end mt-4">
+    <button class="w-full bg-folder text-black rounded-lg"> open </button>
+  </div>
 </section>

@@ -42,15 +42,15 @@
 
 <!-- <Test /> -->
 
-<!-- <section class="w-full h-full flex flex-row min-h-0">
+<section class="w-full h-full flex flex-row min-h-0">
   <Sidebar />
   <View />
   {#if $selectedFile}
     <FileFoulderInfo />
   {/if}
-</section> -->
+</section>
 
-<ImageTest />
+<!-- <ImageTest /> -->
 
 <style>
 </style>
