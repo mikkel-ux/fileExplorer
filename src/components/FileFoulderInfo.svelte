@@ -53,35 +53,49 @@
   <div
     class="border-b-4 border-t-4 border-gray-500 flex flex-col justify-center items-center p-2 gap-2"
   >
-    {#if $selectedFile && $selectedFile.type === "folder"}
-      <Folder size="50%" />
-    {:else if $selectedFile && isImage($selectedFile)}
-      {#if autoplay && $selectedFile.extension === "gif" && firstFrame !== null}
-        <!-- <p class="text-gray-400">No preview available</p> -->
-        <img
-          src={firstFrame}
-          alt="Selected file"
-          class="max-h-40 sm:max-h-60 md:max-h-80 lg:max-h-[32rem] w-auto"
-        />
-      {:else if autoplay && $selectedFile.extension === "gif" && firstFrame === null}
-        <p class="text-gray-400">No preview available</p>
-      {:else}
-        <img
+    {#if $selectedFile}
+      {#if $selectedFile.type === "folder"}
+        <Folder size="50%" />
+      {:else if isImage($selectedFile)}
+        {#if $selectedFile.extension.toLowerCase() === "gif"}
+          {#if autoplay}
+            {#if firstFrame}
+              <img
+                src={firstFrame}
+                alt="First frame of GIF"
+                class="max-h-40 sm:max-h-60 md:max-h-80 lg:max-h-[32rem] w-auto"
+              />
+            {:else}
+              <p class="text-gray-400">No preview available</p>
+            {/if}
+          {:else}
+            <img
+              src={getImageUrl($selectedFile.path)}
+              alt="GIF (not playing)"
+              class="max-h-40 sm:max-h-60 md:max-h-80 lg:max-h-[32rem] w-auto"
+            />
+          {/if}
+        {:else}
+          <img
+            src={getImageUrl($selectedFile.path)}
+            alt="preview"
+            class="max-h-40 sm:max-h-60 md:max-h-80 lg:max-h-[32rem] w-auto"
+          />
+        {/if}
+      {:else if $selectedFile.extension.toLowerCase() === "pdf"}
+        <iframe
           src={getImageUrl($selectedFile.path)}
-          alt="Selected file"
-          class="max-h-40 sm:max-h-60 md:max-h-80 lg:max-h-[32rem] w-auto"
-        />
+          class="w-full rounded-lg h-60"
+          scrolling="auto"
+          title="PDF Preview"
+        ></iframe>
+      {:else}
+        <p class="text-gray-400">No preview available</p>
       {/if}
-    {:else if $selectedFile && $selectedFile.extension === "pdf"}
-      <iframe
-        src={getImageUrl($selectedFile.path)}
-        class="w-full rounded-lg h-60"
-        scrolling="auto"
-        title="PDF Preview"
-      ></iframe>
     {:else}
-      <p class="text-gray-400">No preview available</p>
+      <p class="text-gray-400">No file selected</p>
     {/if}
+
     <p class="text-sm text-center break-all">
       {$selectedFile ? $selectedFile.name : "No file selected"}
     </p>
