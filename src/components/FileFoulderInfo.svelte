@@ -4,8 +4,12 @@
   import { convertFileSrc } from "@tauri-apps/api/core";
   import { isImage } from "../functions/checkFileExtension";
   import { Folder, Inspect } from "@lucide/svelte";
+  import { invoke } from "@tauri-apps/api/core";
+  import { onMount } from "svelte";
+  import { on } from "svelte/events";
 
   let autoplay = $state<boolean>(true);
+  let firstFrame = $state<string | null>(null);
 
   const close = () => {
     removeSelectedFile();
@@ -15,7 +19,24 @@
     return convertFileSrc(path);
   };
 
-  const stillImage = $selectedFile?.path.replace(/\.gif$/, ".png");
+  onMount(async () => {
+    if ($selectedFile && $selectedFile.extension === "gif") {
+      try {
+        const base64 = await loadFirstFrame();
+        firstFrame = base64;
+      } catch (error) {
+        console.error("Error loading first frame:", error);
+        firstFrame = null;
+      }
+    }
+  });
+
+  async function loadFirstFrame() {
+    const base64 = await invoke<string>("first_frame_from_gif", {
+      path: $selectedFile?.path,
+    });
+    return `data:image/png;base64, ${base64}`;
+  }
 </script>
 
 <section
@@ -35,7 +56,14 @@
     {#if $selectedFile && $selectedFile.type === "folder"}
       <Folder size="50%" />
     {:else if $selectedFile && isImage($selectedFile)}
-      {#if autoplay && $selectedFile.extension === "gif"}
+      {#if autoplay && $selectedFile.extension === "gif" && firstFrame !== null}
+        <!-- <p class="text-gray-400">No preview available</p> -->
+        <img
+          src={firstFrame}
+          alt="Selected file"
+          class="max-h-40 sm:max-h-60 md:max-h-80 lg:max-h-[32rem] w-auto"
+        />
+      {:else if autoplay && $selectedFile.extension === "gif" && firstFrame === null}
         <p class="text-gray-400">No preview available</p>
       {:else}
         <img
@@ -59,7 +87,7 @@
     </p>
   </div>
 
-  <div class="grid grid-cols-2 gap-4 text-sm">
+  <div class="grid grid-cols-2 gap-4 text-sm border-b-4 border-gray-500">
     <div>
       <p class="text-gray-400">Type</p>
       <p class="font-semibold">
@@ -89,13 +117,13 @@
       <p class="font-semibold">{$selectedFile?.modified ?? "–"}</p>
     </div>
 
-    <div class="col-span-2">
+    <div class="col-span-2 mb-2">
       <p class="text-gray-400">Last Accessed</p>
       <p class="font-semibold">{$selectedFile?.accessed ?? "–"}</p>
     </div>
   </div>
 
-  <div class="flex justify-end mt-4">
+  <div class="flex justify-end">
     <button class="w-full bg-folder text-black rounded-lg"> open </button>
   </div>
 </section>

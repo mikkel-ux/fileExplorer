@@ -1,8 +1,9 @@
 /* use tauri::{WebviewUrl, WebviewWindowBuilder}; */
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-use tauri_plugin_fs::FsExt;
+//use tauri_plugin_fs::FsExt;
 mod files;
+mod gif_to_img;
 mod search;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -15,7 +16,8 @@ pub fn run() {
             search::search_test,
             files::get_dirs,
             files::get_path,
-            files::get_files_dirs_in_dir
+            files::get_files_dirs_in_dir,
+            gif_to_img::first_frame_from_gif,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
