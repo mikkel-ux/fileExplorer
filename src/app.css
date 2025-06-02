@@ -1,5 +1,5 @@
 @import "tailwindcss";
-
+/* TODO find a color for when you hover a button */
 @theme {
   --color-background: #1a1a1d;
   --color-text: #ffffff;

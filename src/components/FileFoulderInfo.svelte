@@ -3,12 +3,12 @@
   import { removeSelectedFile, selectedFile } from "../stores/tabsStore";
   import { convertFileSrc } from "@tauri-apps/api/core";
   import { isImage } from "../functions/checkFileExtension";
-  import { Folder, Inspect } from "@lucide/svelte";
+  import { Folder } from "@lucide/svelte";
   import { invoke } from "@tauri-apps/api/core";
   import { onMount } from "svelte";
-  import { on } from "svelte/events";
+  import ImagePreview from "./ImagePreview.svelte";
 
-  let autoplay = $state<boolean>(true);
+  let autoplay = $state<boolean>(false);
   let firstFrame = $state<string | null>(null);
 
   const close = () => {
@@ -54,34 +54,18 @@
     class="border-b-4 border-t-4 border-gray-500 flex flex-col justify-center items-center p-2 gap-2"
   >
     {#if $selectedFile}
+      <!-- Folder -->
       {#if $selectedFile.type === "folder"}
         <Folder size="50%" />
       {:else if isImage($selectedFile)}
-        {#if $selectedFile.extension.toLowerCase() === "gif"}
-          {#if autoplay}
-            {#if firstFrame}
-              <img
-                src={firstFrame}
-                alt="First frame of GIF"
-                class="max-h-40 sm:max-h-60 md:max-h-80 lg:max-h-[32rem] w-auto"
-              />
-            {:else}
-              <p class="text-gray-400">No preview available</p>
-            {/if}
-          {:else}
-            <img
-              src={getImageUrl($selectedFile.path)}
-              alt="GIF (not playing)"
-              class="max-h-40 sm:max-h-60 md:max-h-80 lg:max-h-[32rem] w-auto"
-            />
-          {/if}
-        {:else}
-          <img
-            src={getImageUrl($selectedFile.path)}
-            alt="preview"
-            class="max-h-40 sm:max-h-60 md:max-h-80 lg:max-h-[32rem] w-auto"
-          />
-        {/if}
+        <ImagePreview
+          file={$selectedFile}
+          {autoplay}
+          {firstFrame}
+          {getImageUrl}
+        />
+
+        <!-- PDF -->
       {:else if $selectedFile.extension.toLowerCase() === "pdf"}
         <iframe
           src={getImageUrl($selectedFile.path)}
@@ -92,8 +76,9 @@
       {:else}
         <p class="text-gray-400">No preview available</p>
       {/if}
-    {:else}
+      <!-- {:else}
       <p class="text-gray-400">No file selected</p>
+      -->
     {/if}
 
     <p class="text-sm text-center break-all">
@@ -138,6 +123,11 @@
   </div>
 
   <div class="flex justify-end">
-    <button class="w-full bg-folder text-black rounded-lg"> open </button>
+    <button
+      class="w-full bg-folder text-black rounded-lg hover:bg-fuchsia-50
+    "
+    >
+      open
+    </button>
   </div>
 </section>
