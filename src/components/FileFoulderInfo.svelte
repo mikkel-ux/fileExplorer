@@ -8,8 +8,7 @@
   import { onMount } from "svelte";
   import ImagePreview from "./ImagePreview.svelte";
 
-  let autoplay = $state<boolean>(false);
-  let firstFrame = $state<string | null>(null);
+  let autoplay = $state<boolean>(true);
 
   const close = () => {
     removeSelectedFile();
@@ -17,25 +16,6 @@
 
   const getImageUrl = (path: string) => {
     return convertFileSrc(path);
-  };
-
-  onMount(async () => {
-    if ($selectedFile && $selectedFile.extension === "gif") {
-      try {
-        const base64 = await loadFirstFrame();
-        firstFrame = base64;
-      } catch (error) {
-        console.error("Error loading first frame:", error);
-        firstFrame = null;
-      }
-    }
-  });
-
-  const loadFirstFrame = async () => {
-    const base64 = await invoke<string>("first_frame_from_gif", {
-      path: $selectedFile?.path,
-    });
-    return `data:image/png;base64, ${base64}`;
   };
 
   const openFile = async (path: string) => {

@@ -2,10 +2,15 @@
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import { updateHistory, getCurrentPath } from "../stores/tabsStore";
-  import { secsectFile, selectedFile } from "../stores/tabsStore";
+  import {
+    secsectFile,
+    selectedFile,
+    removeSelectedFile,
+  } from "../stores/tabsStore";
   import { invoke, convertFileSrc } from "@tauri-apps/api/core";
-  import { Folder, Inspect, FileText } from "@lucide/svelte";
+
   import { isImage } from "../functions/checkFileExtension";
+  import RenderIcon from "../components/RenderIcon.svelte";
   import type { FileDataType } from "../../type";
 
   let files = $state<FileDataType[]>([]);
@@ -56,6 +61,7 @@
   const openFile = async (file: FileDataType) => {
     if (file.type === "folder") {
       updateHistory(file.path);
+      removeSelectedFile();
       return;
     }
     try {
@@ -80,36 +86,19 @@
         onclick={() => handleClick(file)}
         role="button"
         tabindex="0"
-        class={`ffContainer w-[15cqw] h-[20cqh] rounded-lg flex flex-col items-center justify-center hover:bg-secondary-bg
-      transition-bg ease-in-out
-        ${$selectedFile && $selectedFile.name === file.name ? "bg-highlight" : ""}
-        ${file.isHidden ? "opacity-50" : ""}
-      `}
+        class:opacity-50={file.isHidden}
+        class:bg-highlight={$selectedFile && $selectedFile.name === file.name}
+        class="ffContainer w-[15cqw] h-[20cqh] rounded-lg flex flex-col items-center justify-center hover:bg-secondary-bg
+        transition-bg ease-in-out gap-2 overflow-hidden"
         onkeydown={(e) => {
           handleKeyDown(e, file);
         }}
       >
-        {#if file.type === "folder"}
-          <Folder size="50%" />
-        {:else if file.extension.toLowerCase() === "txt"}
-          <FileText size="50%" />
-        {:else if isImage(file)}
-          {#if file.extension === "gif" && file.base64}
-            <img
-              src={`data:image/png;base64, ${file.base64}`}
-              alt="first frame of gif"
-              class="max-h-40 sm:max-h-60 md:max-h-80 lg:max-h-[32rem] w-auto"
-            />
-          {:else}
-            <img
-              src={getImageUrl(file.path)}
-              alt="preview"
-              class="max-h-40 sm:max-h-60 md:max-h-80 lg:max-h-[32rem] w-auto"
-            />
-          {/if}
-        {:else}
-          <p>no image</p>
-        {/if}
+        <div
+          class="h-[60%] w-full flex items-center justify-center overflow-hidden"
+        >
+          <RenderIcon {file} {getImageUrl} {isImage} />
+        </div>
 
         <p class="truncate w-full">
           {file.name}

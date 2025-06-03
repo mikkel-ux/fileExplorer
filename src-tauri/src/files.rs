@@ -55,7 +55,7 @@ pub fn format_size(bytes: u64) -> String {
     format!("{:.2} {}", size, UNITS[unit])
 }
 
-pub fn first_frame_from_gif(path: String) -> Result<String, String> {
+fn first_frame_from_gif(path: String) -> Result<String, String> {
     let file = File::open(&path).map_err(|e| e.to_string())?;
     let reader = BufReader::new(file);
 

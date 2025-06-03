@@ -3,7 +3,6 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 //use tauri_plugin_fs::FsExt;
 mod files;
-mod gif_to_img;
 mod search;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -18,7 +17,6 @@ pub fn run() {
             files::get_path,
             files::get_files_dirs_in_dir,
             files::open_in_default_app,
-            gif_to_img::first_frame_from_gif,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
