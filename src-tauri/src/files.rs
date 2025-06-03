@@ -1,8 +1,12 @@
+use base64::{engine::general_purpose, Engine as _};
 use chrono::{DateTime, Local};
 use dirs::{desktop_dir, document_dir, download_dir, home_dir, picture_dir, video_dir};
+use image::codecs::gif::GifDecoder;
+use image::{AnimationDecoder, DynamicImage, ImageFormat};
 use serde::Serialize;
-use serde_json::ser;
 use std::fs;
+use std::fs::File;
+use std::io::{BufReader, Cursor};
 use std::path::Path;
 use std::path::PathBuf;
 
@@ -51,6 +55,25 @@ pub fn format_size(bytes: u64) -> String {
     format!("{:.2} {}", size, UNITS[unit])
 }
 
+pub fn first_frame_from_gif(path: String) -> Result<String, String> {
+    let file = File::open(&path).map_err(|e| e.to_string())?;
+    let reader = BufReader::new(file);
+
+    let decoder = GifDecoder::new(reader).map_err(|e| e.to_string())?;
+
+    let mut frames = decoder.into_frames();
+    let frame_resoult = frames.next().ok_or("No frames found")?;
+    let frame = frame_resoult.map_err(|e| e.to_string())?;
+
+    let image = DynamicImage::ImageRgba8(frame.into_buffer());
+    let mut buf = Vec::new();
+    image
+        .write_to(&mut Cursor::new(&mut buf), ImageFormat::Png)
+        .map_err(|e| e.to_string())?;
+    let encoded = general_purpose::STANDARD.encode(&buf);
+    Ok(encoded)
+}
+
 #[derive(Debug, Clone, Serialize)]
 pub struct FileData {
     name: String,
@@ -67,6 +90,7 @@ pub struct FileData {
     is_hidden: bool,
     #[serde(rename = "isReadOnly")]
     is_read_only: bool,
+    base64: Option<String>,
 }
 
 impl FileData {
@@ -120,6 +144,15 @@ impl FileData {
             (mode, is_hidden, is_read_only)
         };
 
+        let first_frame = if extension.eq_ignore_ascii_case("gif") {
+            match first_frame_from_gif(path.to_string_lossy().to_string()) {
+                Ok(frame) => Some(frame),
+                Err(_) => None,
+            }
+        } else {
+            None
+        };
+
         Some(Self {
             name,
             path: path.to_string_lossy().to_string(),
@@ -132,6 +165,7 @@ impl FileData {
             permissions,
             is_hidden,
             is_read_only,
+            base64: first_frame,
         })
     }
 }
@@ -161,4 +195,9 @@ fn idk() {
         println!(" ");
     }
     println!(" ");
+}
+
+#[tauri::command]
+pub fn open_in_default_app(path: String) -> Result<(), String> {
+    open::that(path).map_err(|e| format!("Failed to open file: {}", e))
 }

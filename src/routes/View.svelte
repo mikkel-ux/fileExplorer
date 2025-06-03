@@ -3,8 +3,9 @@
   import { goto } from "$app/navigation";
   import { updateHistory, getCurrentPath } from "../stores/tabsStore";
   import { secsectFile, selectedFile } from "../stores/tabsStore";
-  import { invoke } from "@tauri-apps/api/core";
-  import { Folder, Inspect } from "@lucide/svelte";
+  import { invoke, convertFileSrc } from "@tauri-apps/api/core";
+  import { Folder, Inspect, FileText } from "@lucide/svelte";
+  import { isImage } from "../functions/checkFileExtension";
   import type { FileDataType } from "../../type";
 
   let files = $state<FileDataType[]>([]);
@@ -17,6 +18,7 @@
         path: "C:\\Users\\rumbo\\OneDrive\\Billeder",
       });
       files = result;
+      console.log("files", files);
     } catch (error) {
       console.log("error", error);
     }
@@ -26,11 +28,9 @@
     if (clickTimer) {
       clearTimeout(clickTimer);
       clickTimer = null;
-      console.log("double click");
+      openFile(file);
     } else {
       clickTimer = setTimeout(() => {
-        console.log("single click");
-        console.log($state.snapshot(file));
         secsectFile(file);
         clickTimer = null;
       }, 200);
@@ -43,16 +43,30 @@
       if (enterTimer) {
         clearTimeout(enterTimer);
         enterTimer = null;
-        console.log("double key click");
+        openFile(file);
       } else {
         enterTimer = setTimeout(() => {
-          console.log("single key click");
           secsectFile(file);
-
           enterTimer = null;
         }, 200);
       }
     }
+  };
+
+  const openFile = async (file: FileDataType) => {
+    if (file.type === "folder") {
+      updateHistory(file.path);
+      return;
+    }
+    try {
+      await invoke("open_in_default_app", { path: file.path });
+    } catch (error) {
+      console.error("Error opening file:", error);
+    }
+  };
+
+  const getImageUrl = (path: string) => {
+    return convertFileSrc(path);
   };
 </script>
 
@@ -77,6 +91,22 @@
       >
         {#if file.type === "folder"}
           <Folder size="50%" />
+        {:else if file.extension.toLowerCase() === "txt"}
+          <FileText size="50%" />
+        {:else if isImage(file)}
+          {#if file.extension === "gif" && file.base64}
+            <img
+              src={`data:image/png;base64, ${file.base64}`}
+              alt="first frame of gif"
+              class="max-h-40 sm:max-h-60 md:max-h-80 lg:max-h-[32rem] w-auto"
+            />
+          {:else}
+            <img
+              src={getImageUrl(file.path)}
+              alt="preview"
+              class="max-h-40 sm:max-h-60 md:max-h-80 lg:max-h-[32rem] w-auto"
+            />
+          {/if}
         {:else}
           <p>no image</p>
         {/if}

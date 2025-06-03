@@ -1078,6 +1078,7 @@ dependencies = [
  "dirs",
  "fuzzy-matcher",
  "image",
+ "open",
  "serde",
  "serde_json",
  "strsim",

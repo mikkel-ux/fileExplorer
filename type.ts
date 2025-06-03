@@ -32,4 +32,5 @@ export type FileDataType = {
   permissions: number;
   isHidden: boolean;
   isReadOnly: boolean;
+  base64: string;
 };

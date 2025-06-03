@@ -117,7 +117,7 @@ export const tabsStore = writable<TabType[]>([
 ]);
 
 //=========================
-//
+// File Management
 //==========================
 export const secsectFile = (file: FileDataType) => {
   selectedFile.set(file);

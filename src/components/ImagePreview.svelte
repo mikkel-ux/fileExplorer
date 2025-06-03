@@ -3,10 +3,9 @@
   interface Props {
     file: FileDataType;
     autoplay?: boolean;
-    firstFrame?: string | null;
     getImageUrl: (path: string) => string;
   }
-  let { file, autoplay, firstFrame, getImageUrl }: Props = $props();
+  let { file, autoplay, getImageUrl }: Props = $props();
 </script>
 
 {#if file.extension.toLowerCase() === "gif"}
@@ -16,9 +15,9 @@
       alt="autoplay gif"
       class="max-h-40 sm:max-h-60 md:max-h-80 lg:max-h-[32rem] w-auto"
     />
-  {:else if firstFrame}
+  {:else if file.base64}
     <img
-      src={firstFrame}
+      src={`data:image/png;base64, ${file.base64}`}
       alt="first frame of gif"
       class="max-h-40 sm:max-h-60 md:max-h-80 lg:max-h-[32rem] w-auto"
     />

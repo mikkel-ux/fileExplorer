@@ -3,7 +3,7 @@
   import { removeSelectedFile, selectedFile } from "../stores/tabsStore";
   import { convertFileSrc } from "@tauri-apps/api/core";
   import { isImage } from "../functions/checkFileExtension";
-  import { Folder } from "@lucide/svelte";
+  import { Folder, FileText } from "@lucide/svelte";
   import { invoke } from "@tauri-apps/api/core";
   import { onMount } from "svelte";
   import ImagePreview from "./ImagePreview.svelte";
@@ -31,12 +31,20 @@
     }
   });
 
-  async function loadFirstFrame() {
+  const loadFirstFrame = async () => {
     const base64 = await invoke<string>("first_frame_from_gif", {
       path: $selectedFile?.path,
     });
     return `data:image/png;base64, ${base64}`;
-  }
+  };
+
+  const openFile = async (path: string) => {
+    try {
+      await invoke("open_in_default_app", { path });
+    } catch (error) {
+      console.error("Error opening file:", error);
+    }
+  };
 </script>
 
 <section
@@ -57,13 +65,11 @@
       <!-- Folder -->
       {#if $selectedFile.type === "folder"}
         <Folder size="50%" />
+      {:else if $selectedFile.extension.toLowerCase() === "txt"}
+        <!-- File Icon -->
+        <FileText size="50%" />
       {:else if isImage($selectedFile)}
-        <ImagePreview
-          file={$selectedFile}
-          {autoplay}
-          {firstFrame}
-          {getImageUrl}
-        />
+        <ImagePreview file={$selectedFile} {autoplay} {getImageUrl} />
 
         <!-- PDF -->
       {:else if $selectedFile.extension.toLowerCase() === "pdf"}
@@ -124,6 +130,7 @@
 
   <div class="flex justify-end">
     <button
+      onclick={() => openFile($selectedFile?.path ?? "")}
       class="w-full bg-folder text-black rounded-lg hover:bg-fuchsia-50
     "
     >

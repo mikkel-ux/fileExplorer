@@ -17,6 +17,7 @@ pub fn run() {
             files::get_dirs,
             files::get_path,
             files::get_files_dirs_in_dir,
+            files::open_in_default_app,
             gif_to_img::first_frame_from_gif,
         ])
         .run(tauri::generate_context!())
