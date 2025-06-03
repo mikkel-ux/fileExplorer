@@ -20,7 +20,7 @@
   onMount(async () => {
     try {
       let result: any[] = await invoke("get_files_dirs_in_dir", {
-        path: "C:\\Users\\rumbo\\OneDrive\\Billeder",
+        path: getCurrentPath(),
       });
       files = result;
       console.log("files", files);

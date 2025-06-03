@@ -8,7 +8,7 @@
   import { onMount } from "svelte";
   import ImagePreview from "./ImagePreview.svelte";
 
-  let autoplay = $state<boolean>(true);
+  let autoplay = $state<boolean>(false);
 
   const close = () => {
     removeSelectedFile();
