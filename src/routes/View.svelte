@@ -13,6 +13,9 @@
   import RenderIcon from "../components/RenderIcon.svelte";
   import type { FileDataType } from "../../type";
 
+  import BigItemListTest from "../components/tests/BigItemListTest.svelte";
+  import LazyLoadingTest from "../components/tests/LazyLoadingTest.svelte";
+
   let files = $state<FileDataType[]>([]);
   let clickTimer = $state<NodeJS.Timeout | null>(null);
   let enterTimer = $state<NodeJS.Timeout | null>(null);
@@ -76,7 +79,7 @@
   };
 </script>
 
-<section class="w-full h-full overflow-y-auto overflow-x-hidden">
+<!-- <section class="w-full h-full overflow-y-auto overflow-x-hidden">
   <div
     class="grid grid-cols-5 grid-rows-[repeat(1fr)] gap-2 justify-items-center
   text-center pl-10 pr-10 pb-5 pt-2 select-none"
@@ -106,6 +109,11 @@
       </div>
     {/each}
   </div>
+</section> -->
+
+<section class="w-full h-full">
+  <!-- <LazyLoadingTest children={BigItemListTest} /> -->
+  <BigItemListTest />
 </section>
 
 <style>
