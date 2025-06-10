@@ -183,7 +183,7 @@ pub fn get_files_dirs_in_dir(path: String) -> Result<Vec<FileData>, String> {
     Ok(file_data_list)
 }
 
-#[test]
+/* #[test]
 fn idk() {
     let path = "C:/Users/rumbo/.testFoulderForFE";
     let files = fs::read_dir(path).unwrap();
@@ -195,7 +195,7 @@ fn idk() {
         println!(" ");
     }
     println!(" ");
-}
+} */
 
 #[tauri::command]
 pub fn open_in_default_app(path: String) -> Result<(), String> {

@@ -15,10 +15,14 @@
 
   import BigItemListTest from "../components/tests/BigItemListTest.svelte";
   import LazyLoadingTest from "../components/tests/LazyLoadingTest.svelte";
+  import { Grid } from "svelte-virtual";
 
   let files = $state<FileDataType[]>([]);
   let clickTimer = $state<NodeJS.Timeout | null>(null);
   let enterTimer = $state<NodeJS.Timeout | null>(null);
+  let items = [...Array(1000).keys()];
+
+  let test = $state<number>(0);
 
   onMount(async () => {
     try {
@@ -79,7 +83,7 @@
   };
 </script>
 
-<!-- <section class="w-full h-full overflow-y-auto overflow-x-hidden">
+<section class="w-full h-full overflow-y-auto overflow-x-hidden">
   <div
     class="grid grid-cols-5 grid-rows-[repeat(1fr)] gap-2 justify-items-center
   text-center pl-10 pr-10 pb-5 pt-2 select-none"
@@ -109,12 +113,29 @@
       </div>
     {/each}
   </div>
+</section>
+
+<!-- <section class="w-full h-full">
+  <LazyLoadingTest>
+    {#snippet children({ item }: any)}
+      <BigItemListTest {item} />
+    {/snippet}
+  </LazyLoadingTest>
 </section> -->
 
-<section class="w-full h-full">
-  <!-- <LazyLoadingTest children={BigItemListTest} /> -->
-  <BigItemListTest />
-</section>
+<!-- <section class="w-full h-full" bind:clientHeight={test}>
+  <Grid itemCount={items.length} itemHeight={50} itemWidth={60} height={test}>
+    {#snippet item({ index, style })}
+      <div {style}>
+        {items[index]}
+      </div>
+    {/snippet}
+  </Grid>
+</section> -->
+
+<!-- <section class="w-full h-full">
+  <LazyLoadingTest />
+</section> -->
 
 <style>
   /*   @container (min-width: 1200px) {

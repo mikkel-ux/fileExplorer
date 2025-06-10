@@ -3,6 +3,7 @@
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 //use tauri_plugin_fs::FsExt;
 mod files;
+mod fuzzy_search;
 mod search;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
